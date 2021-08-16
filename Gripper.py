@@ -243,11 +243,11 @@ class Gripper:
 
     def stop_gripper_loose(self):
         self.send_teensy_serial(self.functions_dictionary['Loose'])
-        self.status = 'idle'
+        self.status = 'Idle'
 
     def stop_gripper_hold(self):
         self.send_teensy_serial(self.functions_dictionary['Hold'])
-        self.status = 'holding'
+        self.status = 'Holding'
         func = self.parameter_dictionary['Hold']
         self.send_teensy_serial(func)
 
@@ -367,12 +367,13 @@ class Gripper:
             # Update current position
             self.update_pos()
 
+            # If the current position of the gripper is within the position tolerance, loosen the gripper.
             if abs(self.lead_screw_position-self.positionsetpoint) < self.positionthreshold:
                 self.status = 'Idle'
                 func = self.functions_dictionary['Loose']
                 self.send_teensy_serial(func)
 
-        if self.status == 'holding':
+        if self.status == 'Holding':
             func = ['Force']
             force = self.get_info(func)
             self.gripperGui.curforcevar.set(str(force)+' N')
@@ -427,7 +428,7 @@ class Gripper:
 
             else:
                 self.counter = 0
-        if self.status == 'idle':
+        if self.status == 'Idle':
             pass
 
         self.current_state_data = self.get_info(['Force', 'MotorError'])
@@ -436,4 +437,4 @@ class Gripper:
         self.motorError = self.current_state_data[1]
 
         if self.motorError is not 0:
-            self.status == 'error'
+            self.status == 'Error'
