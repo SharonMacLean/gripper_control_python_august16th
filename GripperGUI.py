@@ -137,15 +137,16 @@ class GripperGUI:
         if self.radiovalue.get() == 1:
             controlunits = 'N'  # not needed for actual implementation
 
+            # Retrieve the force input by the user
             forceinput = self.forceinput.get()
 
-            # Validate the user input
+            # Validate the user input force
             inputresult = self.validate_user_input(input=forceinput, fieldname="Set Gripping Force",
                                                    minvalue=self.kukaGripper1.minimumforce,
                                                    maxvalue=self.kukaGripper1.maximumforce,
                                                    valuetype="force", valueunit="N")
 
-            # If the input was valid, close the gripper
+            # If the input was valid, update the control setpoint
             if inputresult is not None:
                 controlsetpoint = float(self.forceinput.get())
             else:
@@ -156,24 +157,26 @@ class GripperGUI:
         elif self.radiovalue.get() == 2:
             controlunits = 'kg'
 
-            # Ensure Mass given is within acceptable range
-            if self.massinput.get() == '':
-                messagebox.showerror("No Value Entered",
-                                     "Please enter a force set point between 0 and " +
-                                     str(self.kukaGripper1.maximummass) + controlunits)
-                raise ValueError
-            elif float(self.massinput.get()) > self.kukaGripper1.maximummass or float(self.massinput.get()) <= 0:
-                messagebox.showerror("Invalid Range", "Please choose a set point between 0 and " +
-                                     str(self.kukaGripper1.maximummass) + controlunits)
-                raise ValueError
-            else:
+            # Retrieve the mass input by the user
+            massinput = self.massinput.get()
+
+            inputresult = self.validate_user_input(input=massinput, fieldname="Input Object Mass",
+                                                   minvalue=0,
+                                                   maxvalue=self.kukaGripper1.maximummass,
+                                                   valuetype="mass", valueunit="kg")
+
+            # If the input was valid, update the control setpoint
+            if inputresult is not None:
                 # Convert Mass setpoint to a Force Set point
                 # Fgrip = m*(accel_max + g)/(2*mu)
-                controlsetpoint = float(self.massinput.get()) * 24.375
+                controlsetpoint = inputresult * 24.375
 
                 # Ensure setpoint is not below minimum measurable value
                 if controlsetpoint < self.kukaGripper1.minimumforce:
                     controlsetpoint = self.kukaGripper1.minimumforce
+            else:
+                return
+
 
         # Unknown Mass selection
         elif self.radiovalue.get() == 3:

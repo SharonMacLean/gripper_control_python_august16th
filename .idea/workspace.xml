@@ -28,8 +28,8 @@
       <file leaf-file-name="GripperGUI.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GripperGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="371">
-              <caret line="153" column="0" lean-forward="true" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
+            <state relative-caret-position="-1346">
+              <caret line="171" column="48" lean-forward="false" selection-start-line="171" selection-start-column="48" selection-end-line="171" selection-end-column="48" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -193,8 +193,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GripperGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="153" column="0" lean-forward="true" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
+        <state relative-caret-position="-1346">
+          <caret line="171" column="48" lean-forward="false" selection-start-line="171" selection-start-column="48" selection-end-line="171" selection-end-column="48" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
