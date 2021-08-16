@@ -133,26 +133,26 @@ class GripperGUI:
     def close_button_clicked(self):
         # Determine input type selection from radio button
 
-        # Force Input selected
+        # Force Setpoint selected
         if self.radiovalue.get() == 1:
             controlunits = 'N'  # not needed for actual implementation
 
-            # Ensure force input is within bounds
-            if self.forceinput.get() == '':
-                messagebox.showerror("No Value Entered",
-                                     "Please enter a force set point between 0 and " +
-                                     str(self.kukaGripper1.maximumforce) + controlunits)
-                raise ValueError
-            elif float(self.forceinput.get()) > self.kukaGripper1.maximumforce or \
-                    float(self.forceinput.get()) <= self.kukaGripper1.minimumforce:
-                messagebox.showerror("Invalid Range", "Please choose a set point between " +
-                                     str(self.kukaGripper1.minimumforce) + " and " +
-                                     str(self.kukaGripper1.maximumforce) + controlunits)
-                raise ValueError
-            else:
-                controlsetpoint = float(self.forceinput.get())
+            forceinput = self.forceinput.get()
 
-        # Mass input selected
+            # Validate the user input
+            inputresult = self.validate_user_input(input=forceinput, fieldname="Set Gripping Force",
+                                                   minvalue=self.kukaGripper1.minimumforce,
+                                                   maxvalue=self.kukaGripper1.maximumforce,
+                                                   valuetype="force", valueunit="N")
+
+            # If the input was valid, close the gripper
+            if inputresult is not None:
+                controlsetpoint = float(self.forceinput.get())
+            else:
+                return
+
+
+        # Mass Setpoint selected
         elif self.radiovalue.get() == 2:
             controlunits = 'kg'
 
