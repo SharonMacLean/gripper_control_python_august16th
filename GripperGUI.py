@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
-
+import atexit
 
 class GripperGUI:
+
 
     def __init__(self, master, gripper):
 
@@ -17,6 +18,10 @@ class GripperGUI:
         # width = master.winfo_screenwidth()
         # master.geometry('%sx%s' % (int(width*0.6), int(height*0.4))
         master.geometry('650x300')  # Possibly remove this and opt for an autosize at end
+
+        # Altering the closing behaviour
+        # master.wm_protocol("WM_DELETE_WINDOW", self.on_closing())
+        #atexit.register(self.on_closing)
 
         # Inherit Gripper attributes/methods
         self.kukaGripper1 = gripper
@@ -241,6 +246,18 @@ class GripperGUI:
 
         self.kukaGripper1.reset_motor()
 
+    # Handles when user hits the x button in the corner of the GUI
+    # def on_closing(self):
+    #   if messagebox.askokcancel("Quit", "Do you want to quit?"):
+    #      self.master.destroy()
+
+    # Handles when user hits the x button in the corner of the GUI.
+    # See if I need to put a timeout thing here to make sure it doesn't get stuck before ending the program.
+    #def on_closing(self):
+        #print("Stop")
+        #self.stop_button_clicked()
+
+    # Validates numeric user input from the text fields
     def validate_user_input(self, input, fieldname, minvalue, maxvalue, valuetype, valueunit):
 
         # If no value was entered, display an error.
