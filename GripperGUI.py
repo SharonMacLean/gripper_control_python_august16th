@@ -133,47 +133,50 @@ class GripperGUI:
     def close_button_clicked(self):
         # Determine input type selection from radio button
 
-        # Force Input selected
+        # Force Setpoint selected
         if self.radiovalue.get() == 1:
             controlunits = 'N'  # not needed for actual implementation
 
-            # Ensure force input is within bounds
-            if self.forceinput.get() == '':
-                messagebox.showerror("No Value Entered",
-                                     "Please enter a force set point between 0 and " +
-                                     str(self.kukaGripper1.maximumforce) + controlunits)
-                raise ValueError
-            elif float(self.forceinput.get()) > self.kukaGripper1.maximumforce or \
-                    float(self.forceinput.get()) <= self.kukaGripper1.minimumforce:
-                messagebox.showerror("Invalid Range", "Please choose a set point between " +
-                                     str(self.kukaGripper1.minimumforce) + " and " +
-                                     str(self.kukaGripper1.maximumforce) + controlunits)
-                raise ValueError
-            else:
-                controlsetpoint = float(self.forceinput.get())
+            # Retrieve the force input by the user
+            forceinput = self.forceinput.get()
 
-        # Mass input selected
+            # Validate the user input force
+            inputresult = self.validate_user_input(input=forceinput, fieldname="Set Gripping Force",
+                                                   minvalue=self.kukaGripper1.minimumforce,
+                                                   maxvalue=self.kukaGripper1.maximumforce,
+                                                   valuetype="force", valueunit="N")
+
+            # If the input was valid, update the control setpoint
+            if inputresult is not None:
+                controlsetpoint = float(self.forceinput.get())
+            else:
+                return
+
+
+        # Mass Setpoint selected
         elif self.radiovalue.get() == 2:
             controlunits = 'kg'
 
-            # Ensure Mass given is within acceptable range
-            if self.massinput.get() == '':
-                messagebox.showerror("No Value Entered",
-                                     "Please enter a force set point between 0 and " +
-                                     str(self.kukaGripper1.maximummass) + controlunits)
-                raise ValueError
-            elif float(self.massinput.get()) > self.kukaGripper1.maximummass or float(self.massinput.get()) <= 0:
-                messagebox.showerror("Invalid Range", "Please choose a set point between 0 and " +
-                                     str(self.kukaGripper1.maximummass) + controlunits)
-                raise ValueError
-            else:
+            # Retrieve the mass input by the user
+            massinput = self.massinput.get()
+
+            inputresult = self.validate_user_input(input=massinput, fieldname="Input Object Mass",
+                                                   minvalue=0,
+                                                   maxvalue=self.kukaGripper1.maximummass,
+                                                   valuetype="mass", valueunit="kg")
+
+            # If the input was valid, update the control setpoint
+            if inputresult is not None:
                 # Convert Mass setpoint to a Force Set point
                 # Fgrip = m*(accel_max + g)/(2*mu)
-                controlsetpoint = float(self.massinput.get()) * 24.375
+                controlsetpoint = inputresult * 24.375
 
                 # Ensure setpoint is not below minimum measurable value
                 if controlsetpoint < self.kukaGripper1.minimumforce:
                     controlsetpoint = self.kukaGripper1.minimumforce
+            else:
+                return
+
 
         # Unknown Mass selection
         elif self.radiovalue.get() == 3:
@@ -187,47 +190,45 @@ class GripperGUI:
 
         # Ensure object position input is within acceptable range
         # (Object position is measured from base of Kuka wrist)
-        if self.objectpositioninput.get() == '':
-            messagebox.showerror("No Value Entered", "Please enter the distance from the gripper to the object")
-            raise ValueError
-        elif float(self.objectpositioninput.get()) > self.kukaGripper1.maximumobjectdist or \
-                float(self.objectpositioninput.get()) <= self.kukaGripper1.minimumobjectdist:
-            messagebox.showerror("Invalid Range", "Please enter an object distance between " +
-                                 str(self.kukaGripper1.minimumobjectdist) + " and " +
-                                 str(self.kukaGripper1.maximumobjectdist) + "cm")
-            raise ValueError
 
-        # Use close_gripper method with user values
-        self.kukaGripper1.close_gripper(objectdistance=float(self.objectpositioninput.get()),
-                                        forcesetpoint=controlsetpoint, gui=self, fingertype=self.fingercombo.get())
+        # Retrieve the object position input by the user
+        objectpositioninput = self.objectpositioninput.get()
+
+        # Validate the user input
+        inputresult = self.validate_user_input(input=objectpositioninput, fieldname="Distance to Object",
+                                               minvalue=self.kukaGripper1.minimumobjectdist,
+                                               maxvalue=self.kukaGripper1.maximumobjectdist,
+                                               valuetype="distance", valueunit="cm")
+
+        # If the input was valid, close the gripper
+        if inputresult is not None:
+            self.kukaGripper1.close_gripper(objectdistance=inputresult, forcesetpoint=controlsetpoint,
+                                            gui=self, fingertype=self.fingercombo.get())
 
     # Pass input to open gripper to inputted value using Gripper.open_gripper
     def open_button_clicked(self):
 
         # Check if "fully open" has been selected
         if self.chk_state.get():
-            #position = self.kukaGripper1.maximumsize
+            # position = self.kukaGripper1.maximumsize
             self.kukaGripper1.zero_gripper()
+            return
 
-        # Ensure open position input is within acceptable range
-        else:
-            if self.openpositionvalue.get() == '':
-                messagebox.showerror("No Value Entered", "Please enter a valid opening size")
-                raise ValueError
-            elif float(self.openpositionvalue.get()) < 0 or float(self.openpositionvalue.get()) > \
-                    self.kukaGripper1.maximumsize:
-                messagebox.showerror("Invalid Range", "Please enter an opening size between 0 and " +
-                                     str(self.kukaGripper1.maximumsize) + "cm")
-                raise ValueError
-            else:
-                position = float(self.openpositionvalue.get())
+        # If here, "fully open" was not selected. Retrieve the object position input by the user
+        openpositionvalue = self.openpositionvalue.get()
 
+        # Validate the user input
+        inputresult = self.validate_user_input(input=openpositionvalue, fieldname="To an object of size",
+                                               minvalue=0,
+                                               maxvalue=self.kukaGripper1.maximumsize,
+                                               valuetype="opening size", valueunit="mm")
+
+        # If the input was valid, open the gripper
+        if inputresult is not None:
             fingertype = self.fingercombo.get()
             # Convert entered object size into distance along lead screw
-            leadscrew_position = (self.kukaGripper1.maximumsize - position +
-                                  2*self.kukaGripper1.finger_position_offsets[fingertype])/2
-
-            # Use open_gripper method with inputted value
+            leadscrew_position = (self.kukaGripper1.maximumsize - inputresult +
+                                  2 * self.kukaGripper1.finger_position_offsets[fingertype]) / 2
             self.kukaGripper1.open_gripper(position=leadscrew_position)
 
     # Switch gripper to 0-torque mode on user request using Gripper.stop_gripper_loose
@@ -239,3 +240,27 @@ class GripperGUI:
     def reset_button_clicked(self):
 
         self.kukaGripper1.reset_motor()
+
+    def validate_user_input(self, input, fieldname, minvalue, maxvalue, valuetype, valueunit):
+
+        # If no value was entered, display an error.
+        if input == '':
+            messagebox.showerror("No Value Entered", ("Please enter a number into the '" + fieldname + "' field."))
+            raise ValueError("No value entered into the '" + fieldname + "' field.")
+        else:
+            # Try to cast the entered value to a float
+            try:
+                inputfloat = float(input)
+            # If the entered value cannot be cast to a float (aka is not a number), display an error
+            except ValueError:
+                messagebox.showerror("Non-numeric Input", ("The value in the '" + fieldname + "' field is not a "
+                                                           "numeric value. Please enter a number."))
+            # If the value was successfully cast to a float
+            else:
+                # If the value is in the valid range, close the gripper
+                if minvalue < inputfloat <= maxvalue:
+                    return inputfloat
+                else:  # If the value is invalid show an error
+                    messagebox.showerror("Invalid Range", ("Please enter a " + valuetype + " between " +
+                                         str(minvalue) + " and " +
+                                         str(maxvalue) + " " + valueunit))
