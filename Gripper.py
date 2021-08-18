@@ -263,6 +263,7 @@ class Gripper:
 
     def open_gripper(self, position):
         # Check if given size is below maximum size, if not fully open gripper
+        print("Finger type when opening: " + self.fingertype)
         if position*2 >= self.maximumsize:
             print("Lead Screw position must be less than " + str(self.maximumsize/2) + " mm.")
             exit()
@@ -320,10 +321,11 @@ class Gripper:
 
     # This method updates the position variables and calculates their corresponding uncertainty values.
     def update_pos(self):
-        print("update_pos: before get_info(Position) ")
+        #print("update_pos: before get_info(Position) ")
         tempPos = self.get_info(["Position"])
-        print("update_pos: after get_info(Position) ")
+        #print("update_pos: after get_info(Position) ")
         self.lead_screw_position = tempPos[0][0]
+        print("Lead screw: " + str(self.lead_screw_position))
 
         # Get parameters for finger deflections depending on which finger set is being used
         # Estimate finger deflection from quadratic finger stiffness curve-fitting
@@ -341,6 +343,8 @@ class Gripper:
         # TODO: this would allow the convex gripper fingers to run into each other (since they extend 9 mm past the metal
         # TODO: surface of the flexible finger base. This should be added to the calculation to prevent collision.
         self.currentpositiontrue = self.maximumsize - 2 * self.lead_screw_position
+        print(self.fingertype)
+        print(self.finger_position_offsets[self.fingertype])
         self.currentpositionfinger = self.currentpositiontrue - 2 * self.finger_position_offsets[self.fingertype] + \
             2 * self.finger_deflection
 
@@ -379,10 +383,10 @@ class Gripper:
 
     def gripper_loop(self):
         if self.status == 'Opening':
-            print("Gripper loop: Opening")
+            #print("Gripper loop: Opening")
             # Update current position
             self.update_pos()
-            print("Gripper loop: Past update_pos()")
+            #print("Gripper loop: Past update_pos()")
 
             # If the current position of the gripper is within the position tolerance, loosen the gripper.
             if abs(self.lead_screw_position-self.positionsetpoint) < self.positionthreshold:
