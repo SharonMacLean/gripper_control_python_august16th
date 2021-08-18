@@ -14,36 +14,44 @@ class Gripper:
 
         self.positionsetpoint = None
         self.forcesetpoint = None
-        self.currentpositiontrue = None
-        self.currentpositionfinger = None
-        self.currentpositionuncertainty = 0
+
+        # Current distance between the closest surfaces of the flexible finger bases. The flexible finger bases are the
+        # metal dovetails that slide onto the QCTP)
+        self.currentpositiontrue = None       # mm
+
+        # Current distance between the gripper fingers (accounting for finger offset and
+        # finger deflection
+        self.currentpositionfinger = None     # mm
+        self.currentpositionuncertainty = 0   # mm
         self.current_sensor_force = None
         self.current_state_data = None
-        self.currentforce = None
-        self.objectdistance = None
+        self.currentforce = None              # N
+        self.objectdistance = None            # TODO: How is this defined?
         self.currentservoangle = None
         self.finger_deflection = 0
         self.finger_deflection_uncertainty = 0
-        self.force_uncertainty = 1.135  # N
+        self.force_uncertainty = 1.135        # N
         self.status = None
         self.control_input = None
+        # The distance in mm that one lead screw has made it's QCTP travel (mm). Equivalent to x1 in the diagram
         self.lead_screw_position = 0
         self.force_sensor_preload = 0
-        self.sensor_to_gripping_force = 1  # Updates with each new object distance
+        self.sensor_to_gripping_force = 1     # Updates with each new object distance
 
         self.first_loop = True
         self.contact_made = False
         self.counter = 0
         self.start_time = 0
 
-        self.maximumsize = 150  # mm update this value
-        self.maximumforce = 73.125  # N
+        # mm. Distance between the closest surfaces of the flexible finger bases when fully opened (maximum distance).
+        self.maximumsize = 150
+        self.maximumforce = 73.125    # N
         self.minimumforce = 5  # N - Due to Op-Amp issues outputting near rail voltage (0V - 12V)
         self.maximummass = 3  # kg
-        self.maximumobjectdist = 20  # cm update this value
-        self.minimumobjectdist = 11.5  # cm update this value
-        self.minimum_stable_time = 0.1  # update this value (in seconds)
-        self.positionthreshold = 1  # mm
+        self.maximumobjectdist = 20  # cm TODO: update this value
+        self.minimumobjectdist = 11.5  # cm TODO: update this value
+        self.minimum_stable_time = 0.1  # TODO: update this value (in seconds)
+        self.positionthreshold = 1  # mm TODO: this value needs to be decreased. The current position tolerance is only 2 mm (cause 1 mm per lead screw)
         self.hinge_distance = 11.5  # Distance from KUKA wrist to QCTP hinge (cm)
         self.hinge_to_FS = 4  # Distance from Hinge to Force Sensor (cm)
 
@@ -54,8 +62,10 @@ class Gripper:
                                              ('Thin Concave', (9345.79, -0.002, 0.1671, 0.2)),
                                              ('Thick Concave', (23640.7, -0.0001, 0.0486, 0.1))])
 
-        # Update this with actual measured values
-        self.finger_position_offsets = dict([('Rigid', 0), ('Thin Convex', 0), ('Thin Concave', 12)])
+        # Update this with actual measured values TODO: doublecheck these values
+        # Finger offset distance from the inner surface of the flexible finger base (dwg. # ENGG4000-GR13015)
+        # Positive if offset towards the center of the gripper, negative if offset in the opposite direction.
+        self.finger_position_offsets = dict([('Rigid', 0), ('Thin Convex', 9), ('Thin Concave', -9)])
 
         # Any functions which Teensy should respond to must be added here, and to Teensy code
         # Bytes must line up exactly as listed here, and in the Teensy code
@@ -254,7 +264,7 @@ class Gripper:
     def open_gripper(self, position):
         # Check if given size is below maximum size, if not fully open gripper
         if position*2 >= self.maximumsize:
-            print("Lead Screw position must be less than 75mm")
+            print("Lead Screw position must be less than " + str(self.maximumsize/2) + " mm.")
             exit()
         elif position < 0:
             self.zero_gripper()
@@ -308,8 +318,11 @@ class Gripper:
         # Continue updating control input to Teensy until response within acceptable range
         # UPDATE if teensy determines end of control loop instead of python
 
+    # This method updates the position variables and calculates their corresponding uncertainty values.
     def update_pos(self):
+        print("update_pos: before get_info(Position) ")
         tempPos = self.get_info(["Position"])
+        print("update_pos: after get_info(Position) ")
         self.lead_screw_position = tempPos[0][0]
 
         # Get parameters for finger deflections depending on which finger set is being used
@@ -325,6 +338,8 @@ class Gripper:
             self.finger_stiffness_values[self.fingertype][3]
 
         # Update the current position of the QCTP, and the gripping fingers
+        # TODO: this would allow the convex gripper fingers to run into each other (since they extend 9 mm past the metal
+        # TODO: surface of the flexible finger base. This should be added to the calculation to prevent collision.
         self.currentpositiontrue = self.maximumsize - 2 * self.lead_screw_position
         self.currentpositionfinger = self.currentpositiontrue - 2 * self.finger_position_offsets[self.fingertype] + \
             2 * self.finger_deflection
@@ -364,8 +379,10 @@ class Gripper:
 
     def gripper_loop(self):
         if self.status == 'Opening':
+            print("Gripper loop: Opening")
             # Update current position
             self.update_pos()
+            print("Gripper loop: Past update_pos()")
 
             # If the current position of the gripper is within the position tolerance, loosen the gripper.
             if abs(self.lead_screw_position-self.positionsetpoint) < self.positionthreshold:
@@ -431,10 +448,12 @@ class Gripper:
         if self.status == 'Idle':
             pass
 
+        # Update the force and motor error variables
         self.current_state_data = self.get_info(['Force', 'MotorError'])
         self.current_sensor_force = self.current_state_data[0][0]
         self.currentforce = self.current_sensor_force * self.sensor_to_gripping_force - self.force_sensor_preload
         self.motorError = self.current_state_data[1]
 
+        # If a motor error is reported, change the gripper status to 'Error'
         if self.motorError is not 0:
             self.status == 'Error'

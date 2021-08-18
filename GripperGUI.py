@@ -17,7 +17,7 @@ class GripperGUI:
         # height = master.winfo_screenheight()
         # width = master.winfo_screenwidth()
         # master.geometry('%sx%s' % (int(width*0.6), int(height*0.4))
-        master.geometry('650x300')  # Possibly remove this and opt for an autosize at end
+        master.geometry('650x350')  # Possibly remove this and opt for an autosize at end
 
         # Altering the closing behaviour
         # master.wm_protocol("WM_DELETE_WINDOW", self.on_closing())
@@ -66,73 +66,84 @@ class GripperGUI:
 
         # Text Entry Box
         self.objectpositionlabel = Label(master, text="Distance to Object? [cm]", font=("Times New Roman", 10))
-        self.objectpositionlabel.grid(column=2, row=5)
+        self.objectpositionlabel.grid(column=1, row=6)
 
         self.objectpositioninput = Entry(master, width=10)
         self.objectpositioninput.grid(column=2, row=6)
 
+        spacelabel1 = Label(master, text=" ", font=("Times New Roman", 7))
+        spacelabel1.grid(column=0, row=7)
+
         self.openlabel = Label(master, text="Open Gripper", font=("Times New Roman", 16))
-        self.openlabel.grid(column=0, row=7)
+        self.openlabel.grid(column=0, row=8)
 
         self.openpositionlabel = Label(master, text="To an object size of [mm]:", font=("Times New Roman", 10))
-        self.openpositionlabel.grid(column=0, row=8)
+        self.openpositionlabel.grid(column=0, row=9)
 
         self.openpositionvalue = Entry(master, width=10)
-        self.openpositionvalue.grid(column=1, row=8)
+        self.openpositionvalue.grid(column=1, row=9)
 
         self.chk_state = BooleanVar()
         self.chk_state.set(False)
         self.chk = Checkbutton(master, text='Fully Open', var=self.chk_state)
-        self.chk.grid(column=1, row=9)
+        self.chk.grid(column=2, row=9)
 
         # Define open, close, and stop buttons on GUI with respective object methods
         self.openbutton = Button(master, text="Open Gripper", command=self.open_button_clicked)
-        self.openbutton.grid(column=0, row=9)
+        self.openbutton.grid(column=4, row=9)
 
         self.closebutton = Button(master, text="Start Gripping", command=self.close_button_clicked)
-        self.closebutton.grid(column=4, row=8)
+        self.closebutton.grid(column=4, row=5)
 
         self.stopbutton = Button(master, text="Stop Gripping", command=self.stop_button_clicked)
-        self.stopbutton.grid(column=4, row=9)
+        self.stopbutton.grid(column=4, row=6)
 
         self.rebootButton = Button(master, text="Reset Motor", command=self.reset_button_clicked)
         self.rebootButton.grid(column=4, row=2)
 
+        # Display measurement values
+
+        spacelabel2 = Label(master, text=" ", font=("Times New Roman", 7))
+        spacelabel2.grid(column=0, row=13)
+
+        measurementslabel = Label(master, text="Measurements", font=("Times New Roman", 16))
+        measurementslabel.grid(column=0, row=14)
+
         # Display current gripper size opening - Allows updating
         self.cursizelabel = Label(master, text="Current gripper opening:", font=("Times New Roman", 10))
-        self.cursizelabel.grid(column=1, row=12)
+        self.cursizelabel.grid(column=0, row=15)
 
         self.cursizevar = StringVar()
         self.cursizevar.set("X mm")
         self.cursize = Label(master, textvariable=self.cursizevar, font=("Times New Roman", 10))
-        self.cursize.grid(column=1, row=13)
+        self.cursize.grid(column=0, row=16)
 
         # Display current gripping force - Allows updating
         self.curforcelabel = Label(master, text="Current gripping force:", font=("Times New Roman", 10))
-        self.curforcelabel.grid(column=4, row=12)
+        self.curforcelabel.grid(column=1, row=15)
 
         self.curforcevar = StringVar()
         self.curforcevar.set("X N")
         self.curforce = Label(master, textvariable=self.curforcevar, font=("Times New Roman", 10))
-        self.curforce.grid(column=4, row=13)
+        self.curforce.grid(column=1, row=16)
 
         # Display current gripper state - Allows updating
         self.curstatelabel = Label(master, text="Current Gripper State:", font=("Times New Roman", 10))
-        self.curstatelabel.grid(column=4, row=14)
+        self.curstatelabel.grid(column=1, row=17)
 
         self.curstatevar = StringVar()
         self.curstatevar.set("Unknown")
         self.curstate = Label(master, textvariable=self.curstatevar, font=("Times New Roman", 10))
-        self.curstate.grid(column=4, row=15)
+        self.curstate.grid(column=1, row=18)
 
         # Display current position uncertainty - Allows updating
         self.posuncertaintylabel = Label(master, text="Current position uncertainty:", font=("Times New Roman", 10))
-        self.posuncertaintylabel.grid(column=1, row=14)
+        self.posuncertaintylabel.grid(column=0, row=17)
 
         self.posuncertaintyvar = StringVar()
         self.posuncertaintyvar.set("+/-X mm")
         self.posuncertainty = Label(master, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10))
-        self.posuncertainty.grid(column=1, row=15)
+        self.posuncertainty.grid(column=0, row=18)
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
