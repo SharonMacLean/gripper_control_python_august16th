@@ -57,7 +57,7 @@ class PythonController:
 
     # Implement Proportional + Integral control law
     def pi_control(self, currentvalue):
-        print("update pi")
+        #print("update pi")
 
         # Update time steps
         self.t_minus_1 = self.t_current
