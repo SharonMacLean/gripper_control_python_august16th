@@ -264,7 +264,7 @@ class GripperGUI:
         # If the input was valid, close the gripper
         if inputresult is not None:
             self.kukaGripper1.close_gripper(objectdistance=inputresult, forcesetpoint=controlsetpoint,
-                                            gui=self, fingertype=self.fingercombo.get())
+                                            gui=self)
 
     # Pass input to open gripper to inputted value using Gripper.open_gripper
     def open_button_clicked(self):

@@ -278,8 +278,7 @@ class Gripper:
             self.send_teensy_serial(self.functions_dictionary['Open'], position_bytes)
             self.positionsetpoint = position
 
-    def close_gripper(self, objectdistance, forcesetpoint, gui=None, fingertype=None):
-
+    def close_gripper(self, objectdistance, forcesetpoint, gui=None):
         self.objectdistance = objectdistance
         self.forcesetpoint = forcesetpoint
 
@@ -288,14 +287,6 @@ class Gripper:
 
         # Update Current sensor preload value
         self.force_sensor_preload = self.current_sensor_force * self.sensor_to_gripping_force
-
-        # If a new finger type is given, update attribute, otherwise use default value
-        if not(fingertype is None):
-            if fingertype in self.finger_stiffness_values:
-                self.fingertype = fingertype
-            else:
-                print("Invalid finger type entered")
-                exit()
 
         # Update controller with current gripping fingers to get new gains
         self.controller.update_finger_gains(fingertype=self.fingertype)
