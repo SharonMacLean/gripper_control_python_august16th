@@ -54,13 +54,21 @@ def mainloop():
     else:
         kukaGripperGUI.cursizevar.set(("{:." + str(numDecimals) + "f}").format(currentpositiontrue) + " mm")
 
-    # Update the current position of the gripper fingers displayed by the GUI
+    # Update the current position of the gripper fingers (without estimated finger deflection) displayed by the GUI
     currentpositionfinger = kukaGripper1.currentpositionfinger
     if currentpositionfinger is None:
         kukaGripperGUI.curfingersizevar.set("X mm")
     # If the current position is a number
     else:
         kukaGripperGUI.curfingersizevar.set(("{:." + str(numDecimals) + "f}").format(currentpositionfinger) + " mm")
+
+    # Update the current position of the gripper fingers (with estimated finger deflection) displayed by the GUI
+    currentpositionfinger_w_deflection = kukaGripper1.currentpositionfinger_w_deflection
+    if currentpositionfinger_w_deflection is None:
+        kukaGripperGUI.curfingersize_deflect_var.set("X mm")
+    # If the current position is a number
+    else:
+        kukaGripperGUI.curfingersize_deflect_var.set(("{:." + str(numDecimals) + "f}").format(currentpositionfinger_w_deflection) + " mm")
 
     # Update the current position uncertainty of the gripper displayed by the GUI
     kukaGripperGUI.posuncertaintyvar.set(("{:." + str(numDecimals) + "f}").format(

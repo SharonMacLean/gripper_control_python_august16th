@@ -17,20 +17,21 @@ class Gripper:
 
         # Current distance between the closest surfaces of the flexible finger bases. The flexible finger bases are the
         # metal dovetails that slide onto the QCTP)
-        self.currentpositiontrue = None       # mm
+        self.currentpositiontrue = None                # mm
 
         # Current distance between the gripper fingers (accounting for finger offset and
         # finger deflection
-        self.currentpositionfinger = None     # mm
-        self.currentpositionuncertainty = 0   # mm
+        self.currentpositionfinger = None # mm
+        self.currentpositionfinger_w_deflection = None              # mm
+        self.currentpositionuncertainty = 0            # mm
         self.current_sensor_force = None
         self.current_state_data = None
-        self.currentforce = None              # N
-        self.objectdistance = None            # TODO: How is this defined?
+        self.currentforce = None                       # N
+        self.objectdistance = None                     # TODO: How is this defined?
         self.currentservoangle = None
         self.finger_deflection = 0
         self.finger_deflection_uncertainty = 0
-        self.force_uncertainty = 1.135        # N
+        self.force_uncertainty = 1.135                 # N
         self.status = None
         self.control_input = None
         # The distance in mm that one lead screw has made it's QCTP travel (mm). Equivalent to x1 in the diagram
@@ -339,14 +340,15 @@ class Gripper:
             self.finger_stiffness_values[self.fingertype][2] * self.force_uncertainty + \
             self.finger_stiffness_values[self.fingertype][3]
 
+        print(self.fingertype)
+        print(self.finger_position_offsets[self.fingertype])
+
         # Update the current position of the QCTP, and the gripping fingers
         # TODO: this would allow the convex gripper fingers to run into each other (since they extend 9 mm past the metal
         # TODO: surface of the flexible finger base. This should be added to the calculation to prevent collision.
         self.currentpositiontrue = self.maximumsize - 2 * self.lead_screw_position
-        print(self.fingertype)
-        print(self.finger_position_offsets[self.fingertype])
-        self.currentpositionfinger = self.currentpositiontrue - 2 * self.finger_position_offsets[self.fingertype] + \
-            2 * self.finger_deflection
+        self.currentpositionfinger = self.currentpositiontrue - 2*self.finger_position_offsets[self.fingertype]
+        self.currentpositionfinger_w_deflection = self.currentpositionfinger + 2 * self.finger_deflection
 
         # Calculate uncertainty over current position estimate
         self.currentpositionuncertainty = 2 * (self.ls_lead * (self.servo_position_uncertainty + self.gear_backlash) +
