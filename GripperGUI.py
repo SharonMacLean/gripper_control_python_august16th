@@ -191,12 +191,23 @@ class GripperGUI:
                                     background=background_colour)
         self.posuncertainty.grid(column=1, row=18)
 
-        # Image of corresponding Gripper Fingers:
+        # Displaying gripper finger images
         self.image_folder_name = "Gripper_finger_images/"
-        # self. add dictionary of gripper finger image names here
-        self.gripper_image = ImageTk.PhotoImage(Image.open(self.image_folder_name + "GripperBase_w_concavefingers.PNG"))
+        # Dictionary of gripper finger images
+        self.finger_image_names = dict([('Rigid', "GripperBase_w_rigidfingers.PNG"),
+                                             ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
+                                             ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
+                                             ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
+                                             ('Festo Flexible', "GripperBase_w_festofingers.PNG")])
+
+
+        self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names['Rigid'])
+        #gripper_image_height = self.gripper_image.height()
+        self.gripper_image = self.gripper_image.resize((170, 120), Image.ANTIALIAS)
+        self.gripper_image = ImageTk.PhotoImage(self.gripper_image)
         self.label_image = Label(master, image=self.gripper_image)
         self.label_image.grid(column=0, row=20)
+
 
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
