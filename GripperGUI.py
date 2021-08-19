@@ -66,7 +66,7 @@ class GripperGUI:
                                  background_colour)
         self.fingerlabel.grid(column=0, row=5)
 
-        self.fingercombo = Combobox(master)
+        self.fingercombo = Combobox(master, state="readonly")  # Readonly so the user cannot type into the combobox
         self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave")
         self.fingercombo.current(0)
         self.fingercombo.grid(column=0, row=6)
@@ -316,6 +316,22 @@ class GripperGUI:
     # This method updates the self.fingertype variable when the user selects a new fingertype from the combobox.
     def update_finger_type(self, event):
         self.kukaGripper1.fingertype = self.fingercombo.get()
+
+    def change_finger_combobox_state(self):
+        print("Finger combo state: " + str(self.fingercombo['state']))
+
+        # Check the current state of the finger combobox
+        # Readonly: user can interact w/ the combobox but cannot type a custom fingertype into it
+        # Disabled: user cannot interact w/ the combobox (cannot make a new selection)
+        currentstate = self.fingercombo['state']
+
+        # Change the current state
+        if currentstate == 'readonly':
+            self.fingercombo['state'] = "disabled"
+        elif currentstate == 'disabled':
+            self.fingercombo['state'] = 'readonly'
+
+        print("Finger combo state: " + str(self.fingercombo['state']))
 
     # Validates numeric user input from the text fields
     def validate_user_input(self, input, fieldname, minvalue, maxvalue, valuetype, valueunit):
