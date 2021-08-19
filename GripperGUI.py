@@ -20,7 +20,7 @@ class GripperGUI:
         # height = master.winfo_screenheight()
         # width = master.winfo_screenwidth()
         # master.geometry('%sx%s' % (int(width*0.6), int(height*0.4))
-        master.geometry('650x350')  # Possibly remove this and opt for an autosize at end
+        master.geometry('650x600')  # Possibly remove this and opt for an autosize at end
         master.configure(bg=background_colour)
 
         # Altering the closing behaviour
@@ -191,22 +191,19 @@ class GripperGUI:
                                     background=background_colour)
         self.posuncertainty.grid(column=1, row=18)
 
-        # Displaying gripper finger images
-        self.image_folder_name = "Gripper_finger_images/"
+        # Insert label to display the currently selected gripper fingers
+        self.image_folder_name = "Gripper_finger_images/"      # Name of the folder that contains the images
         # Dictionary of gripper finger images
-        self.finger_image_names = dict([('Rigid', "GripperBase_w_rigidfingers.PNG"),
+        self.finger_image_names = dict([('None', "Blank_image.PNG"),
+                                             ('Rigid', "GripperBase_w_rigidfingers.PNG"),
                                              ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
                                              ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
                                              ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
                                              ('Festo Flexible', "GripperBase_w_festofingers.PNG")])
-
-
-        self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names['Rigid'])
-        #gripper_image_height = self.gripper_image.height()
-        self.gripper_image = self.gripper_image.resize((170, 120), Image.ANTIALIAS)
-        self.gripper_image = ImageTk.PhotoImage(self.gripper_image)
-        self.label_image = Label(master, image=self.gripper_image)
+        self.gripper_image = None                   # Variable for storing the currently displayed image
+        self.label_image = Label(master)            # Label to display the gripper image upon
         self.label_image.grid(column=0, row=20)
+        self.update_gripper_finger_image()          # Display the image
 
 
 
@@ -352,6 +349,25 @@ class GripperGUI:
             self.fingercombo['state'] = 'readonly'
 
         print("Finger combo state: " + str(self.fingercombo['state']))
+
+    def update_gripper_finger_image(self):
+        self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names[self.kukaGripper1.fingertype])
+        # Scale image to a fixed height to ensure the GUI elements do not shift dramatically each time the image changes
+        # Original image size
+        gripper_image_height = self.gripper_image.height
+        gripper_image_width = self.gripper_image.width
+
+        # Scale factor
+        height_desired = 120
+        size_factor = height_desired / gripper_image_height
+
+        # Scaled image size
+        width_scaled = round(gripper_image_width * size_factor)
+        height_scaled = round(gripper_image_height * size_factor)
+        self.gripper_image = self.gripper_image.resize((width_scaled, height_scaled), Image.ANTIALIAS)
+        self.gripper_image = ImageTk.PhotoImage(self.gripper_image)
+        self.label_image.configure(image=self.gripper_image)
+
 
     # Validates numeric user input from the text fields
     def validate_user_input(self, input, fieldname, minvalue, maxvalue, valuetype, valueunit):
