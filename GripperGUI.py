@@ -333,6 +333,7 @@ class GripperGUI:
     # This method updates the self.fingertype variable when the user selects a new fingertype from the combobox.
     def update_finger_type(self, event):
         self.kukaGripper1.fingertype = self.fingercombo.get()
+        self.update_gripper_finger_image()
 
     def change_finger_combobox_state(self):
         print("Finger combo state: " + str(self.fingercombo['state']))
