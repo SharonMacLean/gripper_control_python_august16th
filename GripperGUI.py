@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
+from PIL import ImageTk, Image
 import atexit
 
 class GripperGUI:
@@ -189,6 +190,14 @@ class GripperGUI:
         self.posuncertainty = Label(master, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10),
                                     background=background_colour)
         self.posuncertainty.grid(column=1, row=18)
+
+        # Image of corresponding Gripper Fingers:
+        self.image_folder_name = "Gripper_finger_images/"
+        # self. add dictionary of gripper finger image names here
+        self.gripper_image = ImageTk.PhotoImage(Image.open(self.image_folder_name + "GripperBase_w_concavefingers.PNG"))
+        self.label_image = Label(master, image=self.gripper_image)
+        self.label_image.grid(column=0, row=20)
+
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
