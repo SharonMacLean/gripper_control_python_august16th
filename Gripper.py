@@ -58,15 +58,20 @@ class Gripper:
 
         # Finger Stiffness values from testing in the order (Linear Stiffness, Quadratic 'a' value, Quadratic 'b' value,
         #                                                    Position Uncertainty)
+        # TODO: replace the Festo Flexible values with real stiffness values (just put zeros as a fake filler for now)
         self.finger_stiffness_values = dict([('Rigid', (15313140, 0, 0, 0)),
                                              ('Thin Convex', (11764.71, -0.0013, 0.1205, 0.2)),
                                              ('Thin Concave', (9345.79, -0.002, 0.1671, 0.2)),
-                                             ('Thick Concave', (23640.7, -0.0001, 0.0486, 0.1))])
+                                             ('Thick Concave', (23640.7, -0.0001, 0.0486, 0.1)),
+                                             ('Festo Flexible', (0, 0, 0, 0))])
 
-        # Update this with actual measured values TODO: doublecheck these values
         # Finger offset distance from the inner surface of the flexible finger base (dwg. # ENGG4000-GR13015)
         # Positive if offset towards the center of the gripper, negative if offset in the opposite direction.
-        self.finger_position_offsets = dict([('Rigid', 0), ('Thin Convex', 9), ('Thin Concave', -9)])
+        # Verified all of the values (except for the Festo Flexible) on August 2021
+        # TODO: replace the 'Festo Flexible' offset with the real value once it is successfully installed on the adapter
+        # TODO: add the finger offset value for the 'Thick Concave' finger type (if it is still a valid type).
+        self.finger_position_offsets = dict([('Rigid', 0), ('Thin Convex', 9), ('Thin Concave', -9),
+                                             ('Festo Flexible', 0)])
 
         # Any functions which Teensy should respond to must be added here, and to Teensy code
         # Bytes must line up exactly as listed here, and in the Teensy code

@@ -68,7 +68,7 @@ class GripperGUI:
         self.fingerlabel.grid(column=0, row=5)
 
         self.fingercombo = Combobox(master, state="readonly")  # Readonly so the user cannot type into the combobox
-        self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave")
+        self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave", "Festo Flexible")
         self.fingercombo.current(0)
         self.fingercombo.grid(column=0, row=6)
         self.fingercombo.bind("<<ComboboxSelected>>", self.update_finger_type)
