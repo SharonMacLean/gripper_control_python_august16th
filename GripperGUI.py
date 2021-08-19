@@ -1,12 +1,15 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
+from PIL import ImageTk, Image
 import atexit
 
 class GripperGUI:
 
 
     def __init__(self, master, gripper):
+        # Declare background color for the GUI
+        background_colour = "white"
 
         # Inherit tkinter attributes/methods
         self.master = master
@@ -18,6 +21,7 @@ class GripperGUI:
         # width = master.winfo_screenwidth()
         # master.geometry('%sx%s' % (int(width*0.6), int(height*0.4))
         master.geometry('650x350')  # Possibly remove this and opt for an autosize at end
+        master.configure(bg=background_colour)
 
         # Altering the closing behaviour
         # master.wm_protocol("WM_DELETE_WINDOW", self.on_closing())
@@ -27,7 +31,8 @@ class GripperGUI:
         self.kukaGripper1 = gripper
 
         # Insert Radio button to prompt user for type of setpoint entry
-        self.radiolbl = Label(master, text="Choose Control Type", font=("Times New Roman", 16))
+        self.radiolbl = Label(master, text="Choose Control Type", font=("Times New Roman", 16), background=
+                              background_colour)
         self.radiolbl.grid(column=0, row=0)
 
         self.radiovalue = IntVar()
@@ -42,42 +47,50 @@ class GripperGUI:
         self.radio3.grid(column=0, row=3)
 
         # Use text entry to get desired force set point
-        self.forcelabel = Label(master, text="Set Gripping Force (N)", font=("Times New Roman", 10))
+        self.forcelabel = Label(master, text="Set Gripping Force (N)", font=("Times New Roman", 10), background=
+                                background_colour)
         self.forcelabel.grid(column=1, row=1)
 
         self.forceinput = Entry(master, width=10)
         self.forceinput.grid(column=2, row=1)
 
         # Use text entry to get desired mass set point
-        self.masslabel = Label(master, text="Input Object Mass (kg)", font=("Times New Roman", 10))
+        self.masslabel = Label(master, text="Input Object Mass (kg)", font=("Times New Roman", 10), background=
+                               background_colour)
         self.masslabel.grid(column=1, row=2)
 
         self.massinput = Entry(master, width=10)
         self.massinput.grid(column=2, row=2)
 
         # Insert Combobox to get user to input current fingers being used
-        self.fingerlabel = Label(master, text="Select Gripping Fingers", font=("Times New Roman", 16))
+        self.fingerlabel = Label(master, text="Select Gripping Fingers", font=("Times New Roman", 16), background=
+                                 background_colour)
         self.fingerlabel.grid(column=0, row=5)
 
-        self.fingercombo = Combobox(master)
+        self.fingercombo = Combobox(master, state="readonly")  # Readonly so the user cannot type into the combobox
         self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave")
         self.fingercombo.current(0)
         self.fingercombo.grid(column=0, row=6)
+        self.fingercombo.bind("<<ComboboxSelected>>", self.update_finger_type)
+        # The above bind line makes it so the finger type variable is automatically updated as soon as the user
+        # makes a different selection in the combobox (is triggered by the selection event).
 
         # Text Entry Box
-        self.objectpositionlabel = Label(master, text="Distance to Object? [cm]", font=("Times New Roman", 10))
+        self.objectpositionlabel = Label(master, text="Distance to Object? [cm]", font=("Times New Roman", 10),
+                                         background=background_colour)
         self.objectpositionlabel.grid(column=1, row=6)
 
         self.objectpositioninput = Entry(master, width=10)
         self.objectpositioninput.grid(column=2, row=6)
 
-        spacelabel1 = Label(master, text=" ", font=("Times New Roman", 7))
+        spacelabel1 = Label(master, text=" ", font=("Times New Roman", 7), background=background_colour)
         spacelabel1.grid(column=0, row=7)
 
-        self.openlabel = Label(master, text="Open Gripper", font=("Times New Roman", 16))
+        self.openlabel = Label(master, text="Open Gripper", font=("Times New Roman", 16), background=background_colour)
         self.openlabel.grid(column=0, row=8)
 
-        self.openpositionlabel = Label(master, text="To an object size of [mm]:", font=("Times New Roman", 10))
+        self.openpositionlabel = Label(master, text="To an object size of [mm]:", font=("Times New Roman", 10),
+                                       background=background_colour)
         self.openpositionlabel.grid(column=0, row=9)
 
         self.openpositionvalue = Entry(master, width=10)
@@ -103,47 +116,88 @@ class GripperGUI:
 
         # Display measurement values
 
-        spacelabel2 = Label(master, text=" ", font=("Times New Roman", 7))
+        spacelabel2 = Label(master, text=" ", font=("Times New Roman", 7), background=background_colour)
         spacelabel2.grid(column=0, row=13)
 
-        measurementslabel = Label(master, text="Measurements", font=("Times New Roman", 16))
+        measurementslabel = Label(master, text="Measurements", font=("Times New Roman", 16), background=
+                                  background_colour)
         measurementslabel.grid(column=0, row=14)
 
         # Display current gripper size opening - Allows updating
-        self.cursizelabel = Label(master, text="Current gripper opening:", font=("Times New Roman", 10))
+        self.cursizelabel = Label(master, text="Current gripper opening:", font=("Times New Roman", 10), background=
+                                  background_colour)
         self.cursizelabel.grid(column=0, row=15)
 
         self.cursizevar = StringVar()
         self.cursizevar.set("X mm")
-        self.cursize = Label(master, textvariable=self.cursizevar, font=("Times New Roman", 10))
-        self.cursize.grid(column=0, row=16)
+        self.cursize = Label(master, textvariable=self.cursizevar, font=("Times New Roman", 10), background=
+                             background_colour)
+        self.cursize.grid(column=1, row=15)
+
+        # Display current distance between grippers fingers w/o deflection - Allows updating
+        self.curfingersizelabel = Label(master, text="Current distance between gripper fingers \n(w/o estimated finger "
+                                                     "deflection): ", font=("Times New Roman", 10), background=
+                                                     background_colour, justify=CENTER)
+        self.curfingersizelabel.grid(column=0, row=16)
+
+        self.curfingersizevar = StringVar()
+        self.curfingersizevar.set("X mm")
+        self.curfingersize = Label(master, textvariable=self.curfingersizevar, font=("Times New Roman", 10), background=
+                                   background_colour)
+        self.curfingersize.grid(column=1, row=16)
+
+        # Display current distance between gripper fingers with deflection - Allows updating
+        self.curfingersize_deflect_label = Label(master, text="Current distance between gripper fingers \n(w/ estimated"
+                                                              " finger deflection): ", font=("Times New Roman", 10),
+                                                              background=background_colour, justify=CENTER)
+        self.curfingersize_deflect_label.grid(column=0, row=17)
+
+        self.curfingersize_deflect_var = StringVar()
+        self.curfingersize_deflect_var.set("X mm")
+        self.curfingersize_deflect = Label(master, textvariable=self.curfingersize_deflect_var, font=("Times New Roman",
+                                                                10), background=background_colour)
+        self.curfingersize_deflect.grid(column=1, row=17)
 
         # Display current gripping force - Allows updating
-        self.curforcelabel = Label(master, text="Current gripping force:", font=("Times New Roman", 10))
-        self.curforcelabel.grid(column=1, row=15)
+        self.curforcelabel = Label(master, text="Current gripping force:", font=("Times New Roman", 10), background=
+                                   background_colour)
+        self.curforcelabel.grid(column=2, row=15)
 
         self.curforcevar = StringVar()
         self.curforcevar.set("X N")
-        self.curforce = Label(master, textvariable=self.curforcevar, font=("Times New Roman", 10))
-        self.curforce.grid(column=1, row=16)
+        self.curforce = Label(master, textvariable=self.curforcevar, font=("Times New Roman", 10), background=
+                              background_colour)
+        self.curforce.grid(column=2, row=16)
 
         # Display current gripper state - Allows updating
-        self.curstatelabel = Label(master, text="Current Gripper State:", font=("Times New Roman", 10))
-        self.curstatelabel.grid(column=1, row=17)
+        self.curstatelabel = Label(master, text="Current Gripper State:", font=("Times New Roman", 10), background=
+                                   background_colour)
+        self.curstatelabel.grid(column=2, row=17)
 
         self.curstatevar = StringVar()
         self.curstatevar.set("Unknown")
-        self.curstate = Label(master, textvariable=self.curstatevar, font=("Times New Roman", 10))
-        self.curstate.grid(column=1, row=18)
+        self.curstate = Label(master, textvariable=self.curstatevar, font=("Times New Roman", 10), background=
+                              background_colour)
+        self.curstate.grid(column=2, row=18)
 
         # Display current position uncertainty - Allows updating
-        self.posuncertaintylabel = Label(master, text="Current position uncertainty:", font=("Times New Roman", 10))
-        self.posuncertaintylabel.grid(column=0, row=17)
+        self.posuncertaintylabel = Label(master, text="Current position uncertainty:", font=("Times New Roman", 10),
+                                         background=background_colour)
+        self.posuncertaintylabel.grid(column=0, row=18)
 
         self.posuncertaintyvar = StringVar()
         self.posuncertaintyvar.set("+/-X mm")
-        self.posuncertainty = Label(master, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10))
-        self.posuncertainty.grid(column=0, row=18)
+        self.posuncertainty = Label(master, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10),
+                                    background=background_colour)
+        self.posuncertainty.grid(column=1, row=18)
+
+        # Image of corresponding Gripper Fingers:
+        self.image_folder_name = "Gripper_finger_images/"
+        # self. add dictionary of gripper finger image names here
+        self.gripper_image = ImageTk.PhotoImage(Image.open(self.image_folder_name + "GripperBase_w_concavefingers.PNG"))
+        self.label_image = Label(master, image=self.gripper_image)
+        self.label_image.grid(column=0, row=20)
+
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
@@ -219,7 +273,7 @@ class GripperGUI:
         # If the input was valid, close the gripper
         if inputresult is not None:
             self.kukaGripper1.close_gripper(objectdistance=inputresult, forcesetpoint=controlsetpoint,
-                                            gui=self, fingertype=self.fingercombo.get())
+                                            gui=self)
 
     # Pass input to open gripper to inputted value using Gripper.open_gripper
     def open_button_clicked(self):
@@ -267,6 +321,26 @@ class GripperGUI:
     #def on_closing(self):
         #print("Stop")
         #self.stop_button_clicked()
+
+    # This method updates the self.fingertype variable when the user selects a new fingertype from the combobox.
+    def update_finger_type(self, event):
+        self.kukaGripper1.fingertype = self.fingercombo.get()
+
+    def change_finger_combobox_state(self):
+        print("Finger combo state: " + str(self.fingercombo['state']))
+
+        # Check the current state of the finger combobox
+        # Readonly: user can interact w/ the combobox but cannot type a custom fingertype into it
+        # Disabled: user cannot interact w/ the combobox (cannot make a new selection)
+        currentstate = self.fingercombo['state']
+
+        # Change the current state
+        if currentstate == 'readonly':
+            self.fingercombo['state'] = "disabled"
+        elif currentstate == 'disabled':
+            self.fingercombo['state'] = 'readonly'
+
+        print("Finger combo state: " + str(self.fingercombo['state']))
 
     # Validates numeric user input from the text fields
     def validate_user_input(self, input, fieldname, minvalue, maxvalue, valuetype, valueunit):
