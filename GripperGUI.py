@@ -57,7 +57,7 @@ class GripperGUI:
         # Insert Combobox to get user to input current fingers being used
         self.fingerlabel = Label(frame_gripperfingers2, text="Select Gripping Fingers", font=("Times New Roman", 16), background=
                                  background_colour)
-        self.fingerlabel.grid(column=0, row=0)
+        self.fingerlabel.grid(column=0, row=0, padx=(0, 70), pady=(0, 10))
 
         self.fingercombo = Combobox(frame_gripperfingers2, state="readonly")  # Readonly so the user cannot type into the combobox
         self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave", "Festo Flexible")
@@ -73,8 +73,8 @@ class GripperGUI:
 
         # Insert Radio button to prompt user for type of setpoint entry
         self.radiolbl = Label(frame_controltype1, text="Choose Control Type", font=("Times New Roman", 16), background=
-                              background_colour)
-        self.radiolbl.grid(column=0, row=0)
+                              background_colour, justify=LEFT)
+        self.radiolbl.grid(column=0, row=0, pady=(16, 4))
 
         self.radiovalue = IntVar()
 
@@ -118,25 +118,26 @@ class GripperGUI:
         frame_grippingbuttons = tk.Frame(frame_controltype1, background=background_colour)
         frame_grippingbuttons.grid(row=0, column=3, rowspan=4, columnspan=1, sticky=W + E + N + S)
 
-        self.closebutton = Button(frame_grippingbuttons, text="Start Gripping", command=self.close_button_clicked)
-        self.closebutton.grid(column=0, row=0)
-
         self.stopbutton = Button(frame_grippingbuttons, text="Stop Gripping", command=self.stop_button_clicked)
-        self.stopbutton.grid(column=0, row=1)
+        self.stopbutton.pack(side=BOTTOM)
+
+        self.closebutton = Button(frame_grippingbuttons, text="Start Gripping", command=self.close_button_clicked)
+        self.closebutton.pack(side=BOTTOM)
 
         self.rebootButton = Button(frame_grippingbuttons, text="Reset Motor", command=self.reset_button_clicked)
-        self.rebootButton.grid(column=0, row=2)
+        self.rebootButton.pack(side=BOTTOM)
 
         # Frame to hold the opening gripper widgets
         frame_opengripper = tk.Frame(master, background=background_colour)
         frame_opengripper.grid(row=2, column=0, rowspan=1, columnspan=1, sticky=W + E + N + S)
 
-        self.openlabel = Label(frame_opengripper, text="Open Gripper", font=("Times New Roman", 16), background=background_colour)
-        self.openlabel.grid(column=0, row=0)
+        self.openlabel = Label(frame_opengripper, text="Open Gripper", font=("Times New Roman", 16),
+                               background=background_colour, justify=LEFT)
+        self.openlabel.grid(column=0, row=0, pady=(16, 4))
 
         self.openpositionlabel = Label(frame_opengripper, text="To an object size of [mm]:", font=("Times New Roman", 10),
                                        background=background_colour)
-        self.openpositionlabel.grid(column=0, row=1)
+        self.openpositionlabel.grid(column=0, row=1, padx=20)
 
         self.openpositionvalue = Entry(frame_opengripper, width=10)
         self.openpositionvalue.grid(column=1, row=1)
@@ -154,10 +155,11 @@ class GripperGUI:
         # Frame to hold the measurement values widgets
         frame_measurements = tk.Frame(master, background=background_colour)
         frame_measurements.grid(row=3, column=0, rowspan=1, columnspan=1, sticky=W + E + N + S)
+        frame_measurements.grid(column=0, padx=15)
 
         measurementslabel = Label(frame_measurements, text="Measurements", font=("Times New Roman", 16), background=
-                                  background_colour)
-        measurementslabel.grid(column=0, row=0)
+                                  background_colour, justify=LEFT)
+        measurementslabel.grid(column=0, row=0, pady=(16, 4))
 
         # Display current gripper size opening - Allows updating
         self.cursizelabel = Label(frame_measurements, text="Current gripper opening:", font=("Times New Roman", 10),
@@ -236,7 +238,45 @@ class GripperGUI:
         self.sensorstatuslabel = Label(frame_sensorstatus, text="Sensor Status:",
                                      font=("Times New Roman", 16),
                                      background=background_colour)
-        self.sensorstatuslabel.grid(column=0, row=0)
+        self.sensorstatuslabel.grid(column=0, row=0, pady=(16, 4))
+
+        # Sensor not connected labels
+        self.label_loadcell_left = Label(frame_sensorstatus, text="Left load cell: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_loadcell_right = Label(frame_sensorstatus, text="Right load cell: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_left = Label(frame_sensorstatus, text="Left flex sensor: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_right = Label(frame_sensorstatus, text="Right flex sensor: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+
+        self.label_loadcell_left.grid(column=0, row=1)
+        self.label_loadcell_right.grid(column=0, row=2)
+        self.label_flexsensor_left.grid(column=0, row=3)
+        self.label_flexsensor_right.grid(column=0, row=4)
+
+        # Sensor not connected labels
+        self.label_loadcell_left_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_loadcell_right_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_left_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_right_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+
+        self.label_loadcell_left_value.grid(column=1, row=1)
+        self.label_loadcell_right_value.grid(column=1, row=2)
+        self.label_flexsensor_left_value.grid(column=1, row=3)
+        self.label_flexsensor_right_value.grid(column=1, row=4)
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
