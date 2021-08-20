@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter as tk
 from tkinter.ttk import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
@@ -30,182 +31,252 @@ class GripperGUI:
         # Inherit Gripper attributes/methods
         self.kukaGripper1 = gripper
 
-        # Insert Radio button to prompt user for type of setpoint entry
-        self.radiolbl = Label(master, text="Choose Control Type", font=("Times New Roman", 16), background=
-                              background_colour)
-        self.radiolbl.grid(column=0, row=0)
+        # Frame to hold the select gripper finger options
+        frame_gripperfingers1 = tk.Frame(master, background=background_colour)
+        frame_gripperfingers1.grid(row=0, column=0, rowspan=1, columnspan=7, sticky=W + E + N + S)
 
-        self.radiovalue = IntVar()
+        # Insert label to display the currently selected gripper fingers
+        self.image_folder_name = "Gripper_finger_images/"  # Name of the folder that contains the images
+        # Dictionary of gripper finger images
+        self.finger_image_names = dict([('None', "Blank_image.PNG"),
+                                        ('Rigid', "GripperBase_w_rigidfingers.PNG"),
+                                        ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
+                                        ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
+                                        ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
+                                        ('Festo Flexible', "GripperBase_w_festofingers.PNG")])
+        self.gripper_image = None  # Variable for storing the currently displayed image
+        self.label_image = Label(frame_gripperfingers1)  # Label to display the gripper image upon
+        self.label_image.grid(column=1, row=0)
+        self.update_gripper_finger_image()  # Display the image
 
-        self.radio1 = Radiobutton(master, text="Force Setpoint", variable=self.radiovalue, value=1)
-        self.radio1.grid(column=0, row=1)
 
-        self.radio2 = Radiobutton(master, text="Mass Setpoint", variable=self.radiovalue, value=2)
-        self.radio2.grid(column=0, row=2)
-
-        self.radio3 = Radiobutton(master, text="Unknown Mass", variable=self.radiovalue, value=3)
-        self.radio3.grid(column=0, row=3)
-
-        # Use text entry to get desired force set point
-        self.forcelabel = Label(master, text="Set Gripping Force (N)", font=("Times New Roman", 10), background=
-                                background_colour)
-        self.forcelabel.grid(column=1, row=1)
-
-        self.forceinput = Entry(master, width=10)
-        self.forceinput.grid(column=2, row=1)
-
-        # Use text entry to get desired mass set point
-        self.masslabel = Label(master, text="Input Object Mass (kg)", font=("Times New Roman", 10), background=
-                               background_colour)
-        self.masslabel.grid(column=1, row=2)
-
-        self.massinput = Entry(master, width=10)
-        self.massinput.grid(column=2, row=2)
+        # Frame to hold gripper image
+        frame_gripperfingers2 = tk.Frame(frame_gripperfingers1, background=background_colour)
+        frame_gripperfingers2.grid(row=0, column=0, rowspan=2, columnspan=1, sticky=W + E + N + S)
 
         # Insert Combobox to get user to input current fingers being used
-        self.fingerlabel = Label(master, text="Select Gripping Fingers", font=("Times New Roman", 16), background=
+        self.fingerlabel = Label(frame_gripperfingers2, text="Select Gripping Fingers", font=("Times New Roman", 16), background=
                                  background_colour)
-        self.fingerlabel.grid(column=0, row=5)
+        self.fingerlabel.grid(column=0, row=0, padx=(0, 70), pady=(0, 10))
 
-        self.fingercombo = Combobox(master, state="readonly")  # Readonly so the user cannot type into the combobox
+        self.fingercombo = Combobox(frame_gripperfingers2, state="readonly")  # Readonly so the user cannot type into the combobox
         self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave", "Festo Flexible")
         self.fingercombo.current(0)
-        self.fingercombo.grid(column=0, row=6)
+        self.fingercombo.grid(column=0, row=1)
         self.fingercombo.bind("<<ComboboxSelected>>", self.update_finger_type)
         # The above bind line makes it so the finger type variable is automatically updated as soon as the user
         # makes a different selection in the combobox (is triggered by the selection event).
 
+        # Frame to hold control type options
+        frame_controltype1 = tk.Frame(master, background=background_colour)
+        frame_controltype1.grid(row=1, column=0, rowspan=1, columnspan=1, sticky=W + E + N + S)
+
+        # Insert Radio button to prompt user for type of setpoint entry
+        self.radiolbl = Label(frame_controltype1, text="Choose Control Type", font=("Times New Roman", 16), background=
+                              background_colour, justify=LEFT)
+        self.radiolbl.grid(column=0, row=0, pady=(16, 4))
+
+        self.radiovalue = IntVar()
+
+        self.radio1 = tk.Radiobutton(frame_controltype1, text="Force Setpoint", variable=self.radiovalue, value=1,
+                                     bg=background_colour, activebackground=background_colour, highlightthickness=0)
+        self.radio1.grid(column=0, row=1)
+
+        self.radio2 = tk.Radiobutton(frame_controltype1, text="Mass Setpoint", variable=self.radiovalue, value=2,
+                                     bg=background_colour, activebackground=background_colour, highlightthickness=0)
+        self.radio2.grid(column=0, row=2)
+
+        self.radio3 = tk.Radiobutton(frame_controltype1, text="Unknown Mass", variable=self.radiovalue, value=3,
+                                     bg=background_colour, activebackground=background_colour, highlightthickness=0)
+        self.radio3.grid(column=0, row=3)
+
+        # Use text entry to get desired force set point
+        self.forcelabel = Label(frame_controltype1, text="Set Gripping Force (N)", font=("Times New Roman", 10), background=
+                                background_colour)
+        self.forcelabel.grid(column=1, row=1)
+
+        self.forceinput = Entry(frame_controltype1, width=10)
+        self.forceinput.grid(column=2, row=1)
+
+        # Use text entry to get desired mass set point
+        self.masslabel = Label(frame_controltype1, text="Input Object Mass (kg)", font=("Times New Roman", 10), background=
+                               background_colour)
+        self.masslabel.grid(column=1, row=2)
+
+        self.massinput = Entry(frame_controltype1, width=10)
+        self.massinput.grid(column=2, row=2)
+
         # Text Entry Box
-        self.objectpositionlabel = Label(master, text="Distance to Object? [cm]", font=("Times New Roman", 10),
+        self.objectpositionlabel = Label(frame_controltype1, text="Distance to Object? [cm]", font=("Times New Roman", 10),
                                          background=background_colour)
-        self.objectpositionlabel.grid(column=1, row=6)
+        self.objectpositionlabel.grid(column=1, row=3)
 
-        self.objectpositioninput = Entry(master, width=10)
-        self.objectpositioninput.grid(column=2, row=6)
+        self.objectpositioninput = Entry(frame_controltype1, width=10)
+        self.objectpositioninput.grid(column=2, row=3)
 
-        spacelabel1 = Label(master, text=" ", font=("Times New Roman", 7), background=background_colour)
-        spacelabel1.grid(column=0, row=7)
+        # Frame to hold the Gripping buttons
+        frame_grippingbuttons = tk.Frame(frame_controltype1, background=background_colour)
+        frame_grippingbuttons.grid(row=0, column=3, rowspan=4, columnspan=1, sticky=W + E + N + S)
 
-        self.openlabel = Label(master, text="Open Gripper", font=("Times New Roman", 16), background=background_colour)
-        self.openlabel.grid(column=0, row=8)
+        self.stopbutton = Button(frame_grippingbuttons, text="Stop Gripping", command=self.stop_button_clicked)
+        self.stopbutton.pack(side=BOTTOM)
 
-        self.openpositionlabel = Label(master, text="To an object size of [mm]:", font=("Times New Roman", 10),
+        self.closebutton = Button(frame_grippingbuttons, text="Start Gripping", command=self.close_button_clicked)
+        self.closebutton.pack(side=BOTTOM)
+
+        self.rebootButton = Button(frame_grippingbuttons, text="Reset Motor", command=self.reset_button_clicked)
+        self.rebootButton.pack(side=BOTTOM)
+
+        # Frame to hold the opening gripper widgets
+        frame_opengripper = tk.Frame(master, background=background_colour)
+        frame_opengripper.grid(row=2, column=0, rowspan=1, columnspan=1, sticky=W + E + N + S)
+
+        self.openlabel = Label(frame_opengripper, text="Open Gripper", font=("Times New Roman", 16),
+                               background=background_colour, justify=LEFT)
+        self.openlabel.grid(column=0, row=0, pady=(16, 4))
+
+        self.openpositionlabel = Label(frame_opengripper, text="To an object size of [mm]:", font=("Times New Roman", 10),
                                        background=background_colour)
-        self.openpositionlabel.grid(column=0, row=9)
+        self.openpositionlabel.grid(column=0, row=1, padx=20)
 
-        self.openpositionvalue = Entry(master, width=10)
-        self.openpositionvalue.grid(column=1, row=9)
+        self.openpositionvalue = Entry(frame_opengripper, width=10)
+        self.openpositionvalue.grid(column=1, row=1)
 
         self.chk_state = BooleanVar()
         self.chk_state.set(False)
-        self.chk = Checkbutton(master, text='Fully Open', var=self.chk_state)
-        self.chk.grid(column=2, row=9)
+        self.chk = tk.Checkbutton(frame_opengripper, text='Fully Open', var=self.chk_state, background=
+                                  background_colour, activebackground=background_colour, highlightthickness=0)
+        self.chk.grid(column=2, row=1)
 
         # Define open, close, and stop buttons on GUI with respective object methods
-        self.openbutton = Button(master, text="Open Gripper", command=self.open_button_clicked)
-        self.openbutton.grid(column=4, row=9)
+        self.openbutton = Button(frame_opengripper, text="Open Gripper", command=self.open_button_clicked)
+        self.openbutton.grid(column=4, row=1)
 
-        self.closebutton = Button(master, text="Start Gripping", command=self.close_button_clicked)
-        self.closebutton.grid(column=4, row=5)
+        # Frame to hold the measurement values widgets
+        frame_measurements = tk.Frame(master, background=background_colour)
+        frame_measurements.grid(row=3, column=0, rowspan=1, columnspan=1, sticky=W + E + N + S)
+        frame_measurements.grid(column=0, padx=15)
 
-        self.stopbutton = Button(master, text="Stop Gripping", command=self.stop_button_clicked)
-        self.stopbutton.grid(column=4, row=6)
-
-        self.rebootButton = Button(master, text="Reset Motor", command=self.reset_button_clicked)
-        self.rebootButton.grid(column=4, row=2)
-
-        # Display measurement values
-
-        spacelabel2 = Label(master, text=" ", font=("Times New Roman", 7), background=background_colour)
-        spacelabel2.grid(column=0, row=13)
-
-        measurementslabel = Label(master, text="Measurements", font=("Times New Roman", 16), background=
-                                  background_colour)
-        measurementslabel.grid(column=0, row=14)
+        measurementslabel = Label(frame_measurements, text="Measurements", font=("Times New Roman", 16), background=
+                                  background_colour, justify=LEFT)
+        measurementslabel.grid(column=0, row=0, pady=(16, 4))
 
         # Display current gripper size opening - Allows updating
-        self.cursizelabel = Label(master, text="Current gripper opening:", font=("Times New Roman", 10), background=
-                                  background_colour)
-        self.cursizelabel.grid(column=0, row=15)
+        self.cursizelabel = Label(frame_measurements, text="Current gripper opening:", font=("Times New Roman", 10),
+                                  background=background_colour)
+        self.cursizelabel.grid(column=0, row=1)
 
         self.cursizevar = StringVar()
         self.cursizevar.set("X mm")
-        self.cursize = Label(master, textvariable=self.cursizevar, font=("Times New Roman", 10), background=
+        self.cursize = Label(frame_measurements, textvariable=self.cursizevar, font=("Times New Roman", 10), background=
                              background_colour)
-        self.cursize.grid(column=1, row=15)
+        self.cursize.grid(column=1, row=1)
 
         # Display current distance between grippers fingers w/o deflection - Allows updating
-        self.curfingersizelabel = Label(master, text="Current distance between gripper fingers \n(w/o estimated finger "
-                                                     "deflection): ", font=("Times New Roman", 10), background=
-                                                     background_colour, justify=CENTER)
-        self.curfingersizelabel.grid(column=0, row=16)
+        self.curfingersizelabel = Label(frame_measurements, text="Current distance between gripper fingers \n(w/o "
+                                                                 "estimated finger deflection): ", font=("Times New "
+                                                                 "Roman", 10), background=background_colour, justify=
+                                                                 CENTER)
+        self.curfingersizelabel.grid(column=0, row=2)
 
         self.curfingersizevar = StringVar()
         self.curfingersizevar.set("X mm")
-        self.curfingersize = Label(master, textvariable=self.curfingersizevar, font=("Times New Roman", 10), background=
-                                   background_colour)
-        self.curfingersize.grid(column=1, row=16)
+        self.curfingersize = Label(frame_measurements, textvariable=self.curfingersizevar, font=("Times New Roman", 10),
+                                   background=background_colour)
+        self.curfingersize.grid(column=1, row=2)
 
         # Display current distance between gripper fingers with deflection - Allows updating
-        self.curfingersize_deflect_label = Label(master, text="Current distance between gripper fingers \n(w/ estimated"
-                                                              " finger deflection): ", font=("Times New Roman", 10),
-                                                              background=background_colour, justify=CENTER)
-        self.curfingersize_deflect_label.grid(column=0, row=17)
+        self.curfingersize_deflect_label = Label(frame_measurements, text="Current distance between gripper fingers \n"
+                                                                          "(w/ estimated finger deflection): ",
+                                                                          font=("Times New Roman", 10),background=
+                                                                          background_colour, justify=CENTER)
+        self.curfingersize_deflect_label.grid(column=0, row=3)
 
         self.curfingersize_deflect_var = StringVar()
         self.curfingersize_deflect_var.set("X mm")
-        self.curfingersize_deflect = Label(master, textvariable=self.curfingersize_deflect_var, font=("Times New Roman",
-                                                                10), background=background_colour)
-        self.curfingersize_deflect.grid(column=1, row=17)
+        self.curfingersize_deflect = Label(frame_measurements, textvariable=self.curfingersize_deflect_var, font=
+                                                            ("Times New Roman", 10), background=background_colour)
+        self.curfingersize_deflect.grid(column=1, row=3)
 
         # Display current gripping force - Allows updating
-        self.curforcelabel = Label(master, text="Current gripping force:", font=("Times New Roman", 10), background=
+        self.curforcelabel = Label(frame_measurements, text="Current gripping force:", font=("Times New Roman", 10), background=
                                    background_colour)
-        self.curforcelabel.grid(column=2, row=15)
+        self.curforcelabel.grid(column=2, row=1)
 
         self.curforcevar = StringVar()
         self.curforcevar.set("X N")
-        self.curforce = Label(master, textvariable=self.curforcevar, font=("Times New Roman", 10), background=
+        self.curforce = Label(frame_measurements, textvariable=self.curforcevar, font=("Times New Roman", 10), background=
                               background_colour)
-        self.curforce.grid(column=2, row=16)
+        self.curforce.grid(column=3, row=1)
 
         # Display current gripper state - Allows updating
-        self.curstatelabel = Label(master, text="Current Gripper State:", font=("Times New Roman", 10), background=
+        self.curstatelabel = Label(frame_measurements, text="Current Gripper State:", font=("Times New Roman", 10), background=
                                    background_colour)
-        self.curstatelabel.grid(column=2, row=17)
+        self.curstatelabel.grid(column=2, row=2)
 
         self.curstatevar = StringVar()
         self.curstatevar.set("Unknown")
-        self.curstate = Label(master, textvariable=self.curstatevar, font=("Times New Roman", 10), background=
+        self.curstate = Label(frame_measurements, textvariable=self.curstatevar, font=("Times New Roman", 10), background=
                               background_colour)
-        self.curstate.grid(column=2, row=18)
+        self.curstate.grid(column=3, row=2)
 
         # Display current position uncertainty - Allows updating
-        self.posuncertaintylabel = Label(master, text="Current position uncertainty:", font=("Times New Roman", 10),
+        self.posuncertaintylabel = Label(frame_measurements, text="Current position uncertainty:", font=("Times New Roman", 10),
                                          background=background_colour)
-        self.posuncertaintylabel.grid(column=0, row=18)
+        self.posuncertaintylabel.grid(column=0, row=4)
 
         self.posuncertaintyvar = StringVar()
         self.posuncertaintyvar.set("+/-X mm")
-        self.posuncertainty = Label(master, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10),
+        self.posuncertainty = Label(frame_measurements, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10),
                                     background=background_colour)
-        self.posuncertainty.grid(column=1, row=18)
+        self.posuncertainty.grid(column=1, row=4)
 
-        # Insert label to display the currently selected gripper fingers
-        self.image_folder_name = "Gripper_finger_images/"      # Name of the folder that contains the images
-        # Dictionary of gripper finger images
-        self.finger_image_names = dict([('None', "Blank_image.PNG"),
-                                             ('Rigid', "GripperBase_w_rigidfingers.PNG"),
-                                             ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
-                                             ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
-                                             ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
-                                             ('Festo Flexible', "GripperBase_w_festofingers.PNG")])
-        self.gripper_image = None                   # Variable for storing the currently displayed image
-        self.label_image = Label(master)            # Label to display the gripper image upon
-        self.label_image.grid(column=0, row=20)
-        self.update_gripper_finger_image()          # Display the image
+        # Frame to hold the sensor status
+        frame_sensorstatus = tk.Frame(master, background=background_colour)
+        frame_sensorstatus.grid(row=4, column=0, rowspan=1, columnspan=1, sticky=W + E + N + S)
 
+        self.sensorstatuslabel = Label(frame_sensorstatus, text="Sensor Status:",
+                                     font=("Times New Roman", 16),
+                                     background=background_colour)
+        self.sensorstatuslabel.grid(column=0, row=0, pady=(16, 4))
 
+        # Sensor not connected labels
+        self.label_loadcell_left = Label(frame_sensorstatus, text="Left load cell: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_loadcell_right = Label(frame_sensorstatus, text="Right load cell: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_left = Label(frame_sensorstatus, text="Left flex sensor: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_right = Label(frame_sensorstatus, text="Right flex sensor: ",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+
+        self.label_loadcell_left.grid(column=0, row=1)
+        self.label_loadcell_right.grid(column=0, row=2)
+        self.label_flexsensor_left.grid(column=0, row=3)
+        self.label_flexsensor_right.grid(column=0, row=4)
+
+        # Sensor not connected labels
+        self.label_loadcell_left_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_loadcell_right_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_left_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+        self.label_flexsensor_right_value = Label(frame_sensorstatus, text="Connected",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
+
+        self.label_loadcell_left_value.grid(column=1, row=1)
+        self.label_loadcell_right_value.grid(column=1, row=2)
+        self.label_flexsensor_left_value.grid(column=1, row=3)
+        self.label_flexsensor_right_value.grid(column=1, row=4)
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
