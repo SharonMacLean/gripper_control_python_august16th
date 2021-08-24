@@ -41,7 +41,6 @@ def mainloop():
     else:
         kukaGripperGUI.curforcevar.set(("{:." + str(numDecimals) + "f}").format(currentforce) + " N")
 
-
     # Update the current position of the gripper displayed by the GUI
     currentpositiontrue = kukaGripper1.currentpositiontrue
     if currentpositiontrue is None:
@@ -77,6 +76,9 @@ def mainloop():
 
     # Update the gripper status displayed by the GUI
     kukaGripperGUI.curstatevar.set(kukaGripper1.status)
+
+    # Update the motor error code displayed by the GUI
+    kukaGripperGUI.servomotor_error_var.set(kukaGripper1.motorError)
 
     # Update the GUI window
     root.update()

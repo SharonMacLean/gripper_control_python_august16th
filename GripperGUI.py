@@ -242,7 +242,7 @@ class GripperGUI:
         self.sensorstatuslabel.grid(column=0, row=0, pady=(16, 4))
 
         # Sensor not connected labels
-        self.label_servomotor = Label(frame_sensorstatus, text="Smart servo motor: ",
+        self.label_servomotor = Label(frame_sensorstatus, text="Smart servo motor error code: ",
                                          font=("Times New Roman", 10),
                                          background=background_colour)
         self.label_loadcell_left = Label(frame_sensorstatus, text="Left load cell: ",
@@ -265,7 +265,9 @@ class GripperGUI:
         self.label_flexsensor_right.grid(column=0, row=5)
 
         # Sensor not connected labels
-        self.label_servomotor_value = Label(frame_sensorstatus, text="No error",
+        self.servomotor_error_var = StringVar()
+        self.servomotor_error_var.set("")
+        self.label_servomotor = Label(frame_sensorstatus, textvariable=self.servomotor_error_var,
                                      font=("Times New Roman", 10),
                                      background=background_colour)
         self.label_loadcell_left_value = Label(frame_sensorstatus, text="Connected",
@@ -281,7 +283,7 @@ class GripperGUI:
                                      font=("Times New Roman", 10),
                                      background=background_colour)
 
-        self.label_servomotor_value.grid(column=1, row=1)
+        self.label_servomotor.grid(column=1, row=1)
         self.label_loadcell_left_value.grid(column=1, row=2)
         self.label_loadcell_right_value.grid(column=1, row=3)
         self.label_flexsensor_left_value.grid(column=1, row=4)
