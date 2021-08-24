@@ -241,6 +241,9 @@ class GripperGUI:
         self.sensorstatuslabel.grid(column=0, row=0, pady=(16, 4))
 
         # Sensor not connected labels
+        self.label_servomotor = Label(frame_sensorstatus, text="Smart servo motor: ",
+                                         font=("Times New Roman", 10),
+                                         background=background_colour)
         self.label_loadcell_left = Label(frame_sensorstatus, text="Left load cell: ",
                                      font=("Times New Roman", 10),
                                      background=background_colour)
@@ -254,12 +257,16 @@ class GripperGUI:
                                      font=("Times New Roman", 10),
                                      background=background_colour)
 
-        self.label_loadcell_left.grid(column=0, row=1)
-        self.label_loadcell_right.grid(column=0, row=2)
-        self.label_flexsensor_left.grid(column=0, row=3)
-        self.label_flexsensor_right.grid(column=0, row=4)
+        self.label_servomotor.grid(column=0, row=1)
+        self.label_loadcell_left.grid(column=0, row=2)
+        self.label_loadcell_right.grid(column=0, row=3)
+        self.label_flexsensor_left.grid(column=0, row=4)
+        self.label_flexsensor_right.grid(column=0, row=5)
 
         # Sensor not connected labels
+        self.label_servomotor_value = Label(frame_sensorstatus, text="No error",
+                                     font=("Times New Roman", 10),
+                                     background=background_colour)
         self.label_loadcell_left_value = Label(frame_sensorstatus, text="Connected",
                                      font=("Times New Roman", 10),
                                      background=background_colour)
@@ -273,10 +280,11 @@ class GripperGUI:
                                      font=("Times New Roman", 10),
                                      background=background_colour)
 
-        self.label_loadcell_left_value.grid(column=1, row=1)
-        self.label_loadcell_right_value.grid(column=1, row=2)
-        self.label_flexsensor_left_value.grid(column=1, row=3)
-        self.label_flexsensor_right_value.grid(column=1, row=4)
+        self.label_servomotor_value.grid(column=1, row=1)
+        self.label_loadcell_left_value.grid(column=1, row=2)
+        self.label_loadcell_right_value.grid(column=1, row=3)
+        self.label_flexsensor_left_value.grid(column=1, row=4)
+        self.label_flexsensor_right_value.grid(column=1, row=5)
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
@@ -406,21 +414,20 @@ class GripperGUI:
         self.kukaGripper1.fingertype = self.fingercombo.get()
         self.update_gripper_finger_image()
 
-    def change_finger_combobox_state(self):
-        print("Finger combo state: " + str(self.fingercombo['state']))
-
+    def change_finger_combobox_state(self, gripper_status):
         # Check the current state of the finger combobox
         # Readonly: user can interact w/ the combobox but cannot type a custom fingertype into it
         # Disabled: user cannot interact w/ the combobox (cannot make a new selection)
-        currentstate = self.fingercombo['state']
+        currentstate = str(self.fingercombo['state'])
+
+        # Finger combobox should be active if the gripper status is None, Idle, Holding or Error
+        deactivate_menu = gripper_status in ('Opening', 'Closing', 'Holding')
 
         # Change the current state
-        if currentstate == 'readonly':
-            self.fingercombo['state'] = "disabled"
-        elif currentstate == 'disabled':
+        if currentstate == 'readonly' and deactivate_menu:
+            self.fingercombo['state'] = 'disabled'
+        elif currentstate == 'disabled' and not deactivate_menu:
             self.fingercombo['state'] = 'readonly'
-
-        print("Finger combo state: " + str(self.fingercombo['state']))
 
     def update_gripper_finger_image(self):
         self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names[self.kukaGripper1.fingertype])

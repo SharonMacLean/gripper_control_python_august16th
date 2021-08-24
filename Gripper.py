@@ -91,6 +91,9 @@ class Gripper:
                                           ('Position', b'\x0B'), ('Deflection', b'\x0C'),
                                           ('FlexSensor', b'\x0D')])
 
+        # Any additional parameters desired must be added here and to the Teensy code
+        #self.parameter_dictionary = ['Idle','Error','Opening','Closing','Holding']
+
         self.start_byte = b'\xff'
 
         # System Constants
@@ -122,7 +125,7 @@ class Gripper:
     def zero_gripper(self):
         func = self.functions_dictionary['FullyOpen']
         self.send_teensy_serial(func)
-        self.status = 'Opening'
+        self.update_status('Opening')
         self.positionsetpoint = 0
 
 
@@ -259,17 +262,17 @@ class Gripper:
 
     def stop_gripper_loose(self):
         self.send_teensy_serial(self.functions_dictionary['Loose'])
-        self.status = 'Idle'
+        self.update_status('Idle')
 
     def stop_gripper_hold(self):
         self.send_teensy_serial(self.functions_dictionary['Hold'])
-        self.status = 'Holding'
+        self.update_status('Holding')
         func = self.parameter_dictionary['Hold']
         self.send_teensy_serial(func)
 
     def open_gripper(self, position):
         # Check if given size is below maximum size, if not fully open gripper
-        print("Finger type when opening: " + self.fingertype)
+        #print("Finger type when opening: " + self.fingertype)
         if position*2 >= self.maximumsize:
             print("Lead Screw position must be less than " + str(self.maximumsize/2) + " mm.")
             exit()
@@ -279,7 +282,7 @@ class Gripper:
             position_bytes = struct.pack('f', position)
 
             # Update status and prompt Teensy to open
-            self.status = 'Opening'
+            self.update_status('Opening')
             self.send_teensy_serial(self.functions_dictionary['Open'], position_bytes)
             self.positionsetpoint = position
 
@@ -301,7 +304,7 @@ class Gripper:
 
         # Pass parameters and prompt Teensy to start gripping
         self.send_teensy_serial(self.functions_dictionary['Close'])
-        self.status = "Closing"
+        self.update_status("Closing")
 
         # Update gui status
         if gui is not None:
@@ -379,6 +382,10 @@ class Gripper:
     def reset_motor(self):
         self.send_teensy_serial(self.functions_dictionary['RebootMotor'])
 
+    def update_status(self, new_status):
+        self.status = new_status
+        self.gripperGui.change_finger_combobox_state(gripper_status=new_status)
+
     def gripper_loop(self):
         if self.status == 'Opening':
             #print("Gripper loop: Opening")
@@ -388,7 +395,7 @@ class Gripper:
 
             # If the current position of the gripper is within the position tolerance, loosen the gripper.
             if abs(self.lead_screw_position-self.positionsetpoint) < self.positionthreshold:
-                self.status = 'Idle'
+                self.update_status('Idle')
                 func = self.functions_dictionary['Loose']
                 self.send_teensy_serial(func)
 
@@ -443,7 +450,7 @@ class Gripper:
 
                         # Update teensy to keep current position setpoint
                         self.send_teensy_serial(self.functions_dictionary['Hold'])
-                        self.status = 'Holding'
+                        self.update_status('Holding')
 
             else:
                 self.counter = 0
@@ -457,5 +464,9 @@ class Gripper:
         self.motorError = self.current_state_data[1]
 
         # If a motor error is reported, change the gripper status to 'Error'
+        # TODO: This line below would never change status to Error.
+        # TODO: Change to self.update_status('Error').
+        # However, when I changed it to that it always changed the status to Error. Figure out why it thinks the motor
+        # is always shooting an error.
         if self.motorError is not 0:
             self.status == 'Error'
