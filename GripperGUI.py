@@ -45,7 +45,8 @@ class GripperGUI:
                                         ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
                                         ('Festo Flexible', "GripperBase_w_festofingers.PNG")])
         self.gripper_image = None  # Variable for storing the currently displayed image
-        self.label_image = Label(frame_gripperfingers1)  # Label to display the gripper image upon
+        # Label to display the gripper image upon
+        self.label_image = Label(frame_gripperfingers1, background=background_colour)
         self.label_image.grid(column=1, row=0)
         self.update_gripper_finger_image()  # Display the image
 
@@ -439,7 +440,17 @@ class GripperGUI:
             self.fingercombo['state'] = 'readonly'
 
     def update_gripper_finger_image(self):
-        self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names[str(self.kukaGripper1.fingertype)])
+        # Try to open the image from the given file path
+        try:
+            self.gripper_image = Image.open(self.image_folder_name +
+                                            self.finger_image_names[str(self.kukaGripper1.fingertype)])
+        # If the image cannot be opened, display that on the GUI using the image label.
+        except FileNotFoundError:
+            print("Image file not found from given file path.")
+            self.label_image.configure(image="")
+            self.label_image.configure(text="Image of gripper fingers could not be found.")
+            return
+
         # Scale image to a fixed height to ensure the GUI elements do not shift dramatically each time the image changes
         # Original image size
         gripper_image_height = self.gripper_image.height
