@@ -415,25 +415,19 @@ class GripperGUI:
         self.update_gripper_finger_image()
 
     def change_finger_combobox_state(self, gripper_status):
-
         # Check the current state of the finger combobox
         # Readonly: user can interact w/ the combobox but cannot type a custom fingertype into it
         # Disabled: user cannot interact w/ the combobox (cannot make a new selection)
         currentstate = str(self.fingercombo['state'])
 
-        if currentstate == 'readonly':
-            print("readonly")
-        elif currentstate == "disabled":
-            print("disabled")
-
         # Finger combobox should be active if the gripper status is None, Idle, Holding or Error
-        active_menu = gripper_status in ('None', 'Idle', 'Holding', 'Error')
+        deactivate_menu = gripper_status in ('Opening', 'Closing', 'Holding')
 
         # Change the current state
-        if currentstate == 'disabled' and active_menu:
-            self.fingercombo['state'] = 'readonly'
-        elif currentstate == 'readonly' and not active_menu:
+        if currentstate == 'readonly' and deactivate_menu:
             self.fingercombo['state'] = 'disabled'
+        elif currentstate == 'disabled' and not deactivate_menu:
+            self.fingercombo['state'] = 'readonly'
 
     def update_gripper_finger_image(self):
         self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names[self.kukaGripper1.fingertype])
