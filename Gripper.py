@@ -32,7 +32,7 @@ class Gripper:
         self.finger_deflection = 0
         self.finger_deflection_uncertainty = 0
         self.force_uncertainty = 1.135                 # N
-        self.status = None
+        self.status = 'Idle'
         self.control_input = None
         # The distance in mm that one lead screw has made it's QCTP travel (mm). Equivalent to x1 in the diagram
         self.lead_screw_position = 0
