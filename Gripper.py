@@ -5,11 +5,11 @@ import json
 
 class Gripper:
 
-    # Initialize the gripper object, default to Rigid fingers with PI control if no input is given
+    # Initialize the gripper object
     # *Attributes can be updated at anytime, do not necessarily need to be set on initialization
-    def __init__(self, controller, fingertype="Rigid"):
+    def __init__(self, controller):
         self.controller = controller
-        self.fingertype = fingertype
+        self.fingertype = None
         self.serial_communication = None
 
         self.positionsetpoint = None

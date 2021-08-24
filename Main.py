@@ -7,7 +7,7 @@ from GripperGUI import GripperGUI
 from ControlScheme import PythonController
 
 kukaGripperController = PythonController()
-kukaGripper1 = Gripper(controller=kukaGripperController, fingertype="Rigid")
+kukaGripper1 = Gripper(controller=kukaGripperController)
 
 root = Tk()
 kukaGripperGUI = GripperGUI(root, kukaGripper1)

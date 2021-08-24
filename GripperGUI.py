@@ -38,7 +38,7 @@ class GripperGUI:
         # Insert label to display the currently selected gripper fingers
         self.image_folder_name = "Gripper_finger_images/"  # Name of the folder that contains the images
         # Dictionary of gripper finger images
-        self.finger_image_names = dict([('None', "Blank_image.PNG"),
+        self.finger_image_names = dict([('None', "GripperBase_w_nofingers.PNG"),
                                         ('Rigid', "GripperBase_w_rigidfingers.PNG"),
                                         ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
                                         ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
@@ -61,7 +61,7 @@ class GripperGUI:
 
         self.fingercombo = Combobox(frame_gripperfingers2, state="readonly")  # Readonly so the user cannot type into the combobox
         self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave", "Festo Flexible")
-        self.fingercombo.current(0)
+        self.fingercombo.set("")
         self.fingercombo.grid(column=0, row=1)
         self.fingercombo.bind("<<ComboboxSelected>>", self.update_finger_type)
         # The above bind line makes it so the finger type variable is automatically updated as soon as the user
@@ -288,8 +288,13 @@ class GripperGUI:
 
     # Read gripping control set point from user input, convert to a force set point if needed and pass to gripper method
     def close_button_clicked(self):
-        # Determine input type selection from radio button
 
+        # If no finger type was selected, remind the user and do not close the gripper
+        if self.kukaGripper1.fingertype is None:
+            messagebox.showerror("No Finger Type Selected", "Please select a finger type from the drop down menu.")
+            return
+
+        # Determine input type selection from radio button
         # Force Setpoint selected
         if self.radiovalue.get() == 1:
             controlunits = 'N'  # not needed for actual implementation
@@ -365,6 +370,11 @@ class GripperGUI:
     # Pass input to open gripper to inputted value using Gripper.open_gripper
     def open_button_clicked(self):
 
+        # If no finger type was selected, remind the user and do not open the gripper
+        if self.kukaGripper1.fingertype is None:
+            messagebox.showerror("No Finger Type Selected", "Please select a finger type from the drop down menu.")
+            return
+
         # Check if "fully open" has been selected
         if self.chk_state.get():
             # position = self.kukaGripper1.maximumsize
@@ -382,10 +392,9 @@ class GripperGUI:
 
         # If the input was valid, open the gripper
         if inputresult is not None:
-            fingertype = self.fingercombo.get()
             # Convert entered object size into distance along lead screw
             leadscrew_position = (self.kukaGripper1.maximumsize - inputresult +
-                                  2 * self.kukaGripper1.finger_position_offsets[fingertype]) / 2
+                                  2 * self.kukaGripper1.finger_position_offsets[self.kukaGripper1.fingertype]) / 2
             self.kukaGripper1.open_gripper(position=leadscrew_position)
 
     # Switch gripper to 0-torque mode on user request using Gripper.stop_gripper_loose
@@ -430,7 +439,7 @@ class GripperGUI:
             self.fingercombo['state'] = 'readonly'
 
     def update_gripper_finger_image(self):
-        self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names[self.kukaGripper1.fingertype])
+        self.gripper_image = Image.open(self.image_folder_name + self.finger_image_names[str(self.kukaGripper1.fingertype)])
         # Scale image to a fixed height to ensure the GUI elements do not shift dramatically each time the image changes
         # Original image size
         gripper_image_height = self.gripper_image.height
