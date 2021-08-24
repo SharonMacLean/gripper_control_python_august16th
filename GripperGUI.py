@@ -39,7 +39,7 @@ class GripperGUI:
         self.image_folder_name = "Gripper_finger_images/"  # Name of the folder that contains the images
         # Dictionary of gripper finger images
         self.finger_image_names = dict([('None', "GripperBase_w_nofingers.PNG"),
-                                        ('Rigid', "GripperBase_w_rigidfinger.PNG"),
+                                        ('Rigid', "GripperBase_w_rigidfingers.PNG"),
                                         ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
                                         ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
                                         ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
