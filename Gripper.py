@@ -11,6 +11,8 @@ class Gripper:
         self.controller = controller
         self.fingertype = None
         self.serial_communication = None
+        self.gripperGui = None
+        self.motorError = None
 
         self.positionsetpoint = None
         self.forcesetpoint = None
@@ -91,8 +93,20 @@ class Gripper:
                                           ('Position', b'\x0B'), ('Deflection', b'\x0C'),
                                           ('FlexSensor', b'\x0D')])
 
-        # Any additional parameters desired must be added here and to the Teensy code
+        # Below do some type of enum or dictionary situation to restrict what the statuses can be set to.
         #self.parameter_dictionary = ['Idle','Error','Opening','Closing','Holding']
+
+        # From the A1-16 smart servo datasheet
+        # These are the definitions of the motor error codes (status_error)
+        self.motor_error_dictionary = dict([(b'\x00', 'No Error (White LED on)'),
+                                          (b'\x01', 'Exceed Potentiometer Range Error (Blue LED on)'),
+                                          (b'\x02', 'Over Voltage Limits Error (Red LED on/White LED off)'),
+                                          (b'\x04', 'Over Temperature Error (Red LED on/White LED off)'),
+                                          (b'\x08', 'Overload/Over-current Error (Red LED on/White LED off)'),
+                                          (b'\x10', 'Reserved'),
+                                          (b'\x20', 'Requested Packet Checksum Error (Green LED on)'),
+                                          (b'\x40', 'Requested Packet Data Error (Green LED on)'),
+                                          (b'\x80', 'Requested Packet RX FIFO Error (Green LED on)')])
 
         self.start_byte = b'\xff'
 
@@ -213,6 +227,7 @@ class Gripper:
 
         return message_received
 
+    # Returns requested values as floats
     def get_info(self, parameters):
         # Initialize list
         parameter_bytes = []
@@ -251,12 +266,11 @@ class Gripper:
             #    if temp == "y":
             #        exit()
 
-        # Get values from list
+        # Get values from list, values are hex
         returned_values_bytes = message_recieved[1]
 
         # Use method to convert bytes to floats and integers
         returned_values = self.unpack_serial_data(returned_values_bytes, parameters)
-        #print(returned_values)
 
         return returned_values
 
@@ -464,9 +478,5 @@ class Gripper:
         self.motorError = self.current_state_data[1]
 
         # If a motor error is reported, change the gripper status to 'Error'
-        # TODO: This line below would never change status to Error.
-        # TODO: Change to self.update_status('Error').
-        # However, when I changed it to that it always changed the status to Error. Figure out why it thinks the motor
-        # is always shooting an error.
         if self.motorError is not 0:
-            self.status == 'Error'
+            self.update_status('Error')
