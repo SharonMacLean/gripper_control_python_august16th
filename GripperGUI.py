@@ -79,20 +79,23 @@ class GripperGUI:
 
         self.radiovalue = IntVar()
 
-        self.radio1 = tk.Radiobutton(frame_controltype1, text="Force Setpoint", variable=self.radiovalue, value=1,
-                                     bg=background_colour, activebackground=background_colour, highlightthickness=0)
+        self.radio1 = tk.Radiobutton(frame_controltype1, text="Force Setpoint", font=("Times New Roman", 10),
+                                     variable=self.radiovalue, value=1,bg=background_colour,
+                                     activebackground=background_colour, highlightthickness=0)
         self.radio1.grid(column=0, row=1)
 
-        self.radio2 = tk.Radiobutton(frame_controltype1, text="Mass Setpoint", variable=self.radiovalue, value=2,
-                                     bg=background_colour, activebackground=background_colour, highlightthickness=0)
+        self.radio2 = tk.Radiobutton(frame_controltype1, text="Mass Setpoint", font=("Times New Roman", 10),
+                                     variable=self.radiovalue, value=2, bg=background_colour,
+                                     activebackground=background_colour, highlightthickness=0)
         self.radio2.grid(column=0, row=2)
 
-        self.radio3 = tk.Radiobutton(frame_controltype1, text="Unknown Mass", variable=self.radiovalue, value=3,
-                                     bg=background_colour, activebackground=background_colour, highlightthickness=0)
+        self.radio3 = tk.Radiobutton(frame_controltype1, text="Unknown Mass", font=("Times New Roman", 10),
+                                     variable=self.radiovalue, value=3, bg=background_colour,
+                                     activebackground=background_colour, highlightthickness=0)
         self.radio3.grid(column=0, row=3)
 
         # Use text entry to get desired force set point
-        self.forcelabel = Label(frame_controltype1, text="Set Gripping Force (N)", font=("Times New Roman", 10), background=
+        self.forcelabel = Label(frame_controltype1, text="Set Gripping Force [N]", font=("Times New Roman", 10), background=
                                 background_colour)
         self.forcelabel.grid(column=1, row=1)
 
@@ -100,7 +103,7 @@ class GripperGUI:
         self.forceinput.grid(column=2, row=1)
 
         # Use text entry to get desired mass set point
-        self.masslabel = Label(frame_controltype1, text="Input Object Mass (kg)", font=("Times New Roman", 10), background=
+        self.masslabel = Label(frame_controltype1, text="Input Object Mass [kg]", font=("Times New Roman", 10), background=
                                background_colour)
         self.masslabel.grid(column=1, row=2)
 
@@ -108,7 +111,7 @@ class GripperGUI:
         self.massinput.grid(column=2, row=2)
 
         # Text Entry Box
-        self.objectpositionlabel = Label(frame_controltype1, text="Distance to Object (cm)", font=("Times New Roman", 10),
+        self.objectpositionlabel = Label(frame_controltype1, text="Distance to Object [cm]", font=("Times New Roman", 10),
                                          background=background_colour)
         self.objectpositionlabel.grid(column=1, row=3)
 
