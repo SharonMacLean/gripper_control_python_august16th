@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="829e82ea-4234-44c7-a9ba-3d2f37798127" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Gripper.py" afterPath="$PROJECT_DIR$/Gripper.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/GripperGUI.py" afterPath="$PROJECT_DIR$/GripperGUI.py" />
-      <change beforePath="$PROJECT_DIR$/Main.py" afterPath="$PROJECT_DIR$/Main.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +17,8 @@
       <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="130">
-              <caret line="74" column="48" lean-forward="false" selection-start-line="74" selection-start-column="48" selection-end-line="74" selection-end-column="48" />
+            <state relative-caret-position="0">
+              <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -27,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Gripper.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Gripper.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gripper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="479" column="40" lean-forward="true" selection-start-line="479" selection-start-column="40" selection-end-line="479" selection-end-column="40" />
+            <state relative-caret-position="-172">
+              <caret line="336" column="18" lean-forward="false" selection-start-line="336" selection-start-column="8" selection-end-line="336" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -47,34 +46,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GripperGUI.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GripperGUI.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GripperGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4002">
-              <caret line="292" column="35" lean-forward="true" selection-start-line="292" selection-start-column="35" selection-end-line="292" selection-end-column="35" />
+            <state relative-caret-position="288">
+              <caret line="413" column="33" lean-forward="true" selection-start-line="413" selection-start-column="33" selection-end-line="413" selection-end-column="33" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/lib/python3.5/tkinter/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="1325" column="8" lean-forward="false" selection-start-line="1325" selection-start-column="8" selection-end-line="1325" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ttk.py" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/lib/python3.5/tkinter/ttk.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="703">
-              <caret line="705" column="8" lean-forward="false" selection-start-line="705" selection-start-column="8" selection-end-line="705" selection-end-column="8" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -83,7 +62,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>currentpositionfinger</find>
       <find>open</find>
       <find>close_</find>
       <find>finger_position_offsets</find>
@@ -110,9 +88,10 @@
       <find>distance to</find>
       <find>error</find>
       <find>finger_off</find>
-      <find>update_pos</find>
-      <find>finger_gains</find>
       <find>finger_off</find>
+      <find>finger_gains</find>
+      <find>ope</find>
+      <find>update_pos</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -125,9 +104,9 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_4.py" />
         <option value="$PROJECT_DIR$/ControlScheme.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_5.py" />
-        <option value="$PROJECT_DIR$/GripperGUI.py" />
         <option value="$PROJECT_DIR$/Main.py" />
         <option value="$PROJECT_DIR$/Gripper.py" />
+        <option value="$PROJECT_DIR$/GripperGUI.py" />
       </list>
     </option>
   </component>
@@ -685,14 +664,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ControlScheme.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="22" column="86" lean-forward="false" selection-start-line="22" selection-start-column="86" selection-end-line="22" selection-end-column="86" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3.5/tkinter/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
@@ -717,20 +688,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Main.py">
+    <entry file="file://$PROJECT_DIR$/ControlScheme.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="74" column="48" lean-forward="false" selection-start-line="74" selection-start-column="48" selection-end-line="74" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="203">
+          <caret line="22" column="86" lean-forward="false" selection-start-line="22" selection-start-column="86" selection-end-line="22" selection-end-column="86" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GripperGUI.py">
+    <entry file="file://$PROJECT_DIR$/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4002">
-          <caret line="292" column="35" lean-forward="true" selection-start-line="292" selection-start-column="35" selection-end-line="292" selection-end-column="35" />
+        <state relative-caret-position="0">
+          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
@@ -739,9 +708,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gripper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="479" column="40" lean-forward="true" selection-start-line="479" selection-start-column="40" selection-end-line="479" selection-end-column="40" />
+        <state relative-caret-position="-172">
+          <caret line="336" column="18" lean-forward="false" selection-start-line="336" selection-start-column="8" selection-end-line="336" selection-end-column="18" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GripperGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="413" column="33" lean-forward="true" selection-start-line="413" selection-start-column="33" selection-end-line="413" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
