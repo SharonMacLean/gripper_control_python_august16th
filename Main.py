@@ -67,8 +67,13 @@ def mainloop():
         kukaGripperGUI.curfingersize_deflect_var.set(("{:." + str(numDecimals) + "f}").format(currentpositionfinger_w_deflection) + " mm")
 
     # Update the current position uncertainty of the gripper displayed by the GUI
-    kukaGripperGUI.posuncertaintyvar.set(("{:." + str(numDecimals) + "f}").format(
-        kukaGripper1.currentpositionuncertainty) + " mm")
+    currentpositionuncertainty = kukaGripper1.currentpositionuncertainty
+    if currentpositionuncertainty is None:
+        kukaGripperGUI.posuncertaintyvar.set("X mm")
+    # If the current position is a number
+    else:
+        kukaGripperGUI.posuncertaintyvar.set(("{:." + str(numDecimals) + "f}").format(currentpositionuncertainty)
+                                             + " mm")
 
     # Update the gripper status displayed by the GUI
     kukaGripperGUI.curstatevar.set(kukaGripper1.status)

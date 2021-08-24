@@ -23,7 +23,7 @@ class Gripper:
         # finger deflection
         self.currentpositionfinger = None # mm
         self.currentpositionfinger_w_deflection = None              # mm
-        self.currentpositionuncertainty = 0            # mm
+        self.currentpositionuncertainty = None            # mm
         self.current_sensor_force = None
         self.current_state_data = None
         self.currentforce = None                       # N

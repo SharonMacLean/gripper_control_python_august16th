@@ -108,7 +108,7 @@ class GripperGUI:
         self.massinput.grid(column=2, row=2)
 
         # Text Entry Box
-        self.objectpositionlabel = Label(frame_controltype1, text="Distance to Object? [cm]", font=("Times New Roman", 10),
+        self.objectpositionlabel = Label(frame_controltype1, text="Distance to Object (cm)", font=("Times New Roman", 10),
                                          background=background_colour)
         self.objectpositionlabel.grid(column=1, row=3)
 
