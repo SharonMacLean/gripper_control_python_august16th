@@ -12,10 +12,7 @@ kukaGripper1 = Gripper(controller=kukaGripperController, fingertype="Rigid")
 root = Tk()
 kukaGripperGUI = GripperGUI(root, kukaGripper1)
 numDecimals = 3  # Number of decimals to show when displaying the gripper measurements
-
-
 kukaGripper1.initialize_gripper(serial_port='/dev/ttyACM0', baud=115200, serial_timeout=0.01, gui=kukaGripperGUI)
-
 
 def main():
     #dt = [0 for _ in range(1000)]
@@ -36,7 +33,6 @@ def main():
 # Main loop of the program. The measurement values shown in the Gripper GUI window are updated here.
 def mainloop():
     kukaGripper1.gripper_loop()
-
     # Update the current gripper force displayed by the GUI
     currentforce = kukaGripper1.currentforce
     if currentforce is None:

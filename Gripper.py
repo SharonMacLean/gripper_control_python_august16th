@@ -91,6 +91,9 @@ class Gripper:
                                           ('Position', b'\x0B'), ('Deflection', b'\x0C'),
                                           ('FlexSensor', b'\x0D')])
 
+        # Any additional parameters desired must be added here and to the Teensy code
+        #self.parameter_dictionary = ['Idle','Error','Opening','Closing','Holding']
+
         self.start_byte = b'\xff'
 
         # System Constants
@@ -269,7 +272,7 @@ class Gripper:
 
     def open_gripper(self, position):
         # Check if given size is below maximum size, if not fully open gripper
-        print("Finger type when opening: " + self.fingertype)
+        #print("Finger type when opening: " + self.fingertype)
         if position*2 >= self.maximumsize:
             print("Lead Screw position must be less than " + str(self.maximumsize/2) + " mm.")
             exit()
@@ -381,6 +384,7 @@ class Gripper:
 
     def update_status(self, new_status):
         self.status = new_status
+        self.gripperGui.change_finger_combobox_state(gripper_status=new_status)
 
     def gripper_loop(self):
         if self.status == 'Opening':
