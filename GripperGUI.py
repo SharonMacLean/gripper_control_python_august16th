@@ -373,8 +373,10 @@ class GripperGUI:
     # Pass input to open gripper to inputted value using Gripper.open_gripper
     def open_button_clicked(self):
 
+        fingertype = self.kukaGripper1.fingertype
+
         # If no finger type was selected, remind the user and do not open the gripper
-        if self.kukaGripper1.fingertype is None:
+        if fingertype is None:
             messagebox.showerror("No Finger Type Selected", "Please select a finger type from the drop down menu.")
             return
 
@@ -387,17 +389,29 @@ class GripperGUI:
         # If here, "fully open" was not selected. Retrieve the object position input by the user
         openpositionvalue = self.openpositionvalue.get()
 
+        # Determine the min valid size
+        finger_offset = self.kukaGripper1.finger_position_offsets[fingertype]
+        minsize = 0
+        if finger_offset < 0:
+            minsize = -2*finger_offset
+
+        # Determine the max valid size
+        kuka_maxsize = self.kukaGripper1.maximumsize
+        maxsize = kuka_maxsize
+        if finger_offset != 0:
+            maxsize = maxsize - 2*finger_offset
+
         # Validate the user input
         inputresult = self.validate_user_input(input=openpositionvalue, fieldname="To an object of size",
-                                               minvalue=0,
-                                               maxvalue=self.kukaGripper1.maximumsize,
+                                               minvalue=minsize,
+                                               maxvalue=maxsize,
                                                valuetype="opening size", valueunit="mm")
 
         # If the input was valid, open the gripper
         if inputresult is not None:
             # Convert entered object size into distance along lead screw
-            leadscrew_position = (self.kukaGripper1.maximumsize - inputresult +
-                                  2 * self.kukaGripper1.finger_position_offsets[self.kukaGripper1.fingertype]) / 2
+            qctp_position = inputresult + 2*finger_offset
+            leadscrew_position = (kuka_maxsize - qctp_position) / 2
             self.kukaGripper1.open_gripper(position=leadscrew_position)
 
     # Switch gripper to 0-torque mode on user request using Gripper.stop_gripper_loose
