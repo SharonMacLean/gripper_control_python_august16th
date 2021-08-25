@@ -449,8 +449,9 @@ class GripperGUI:
         # Disabled: user cannot interact w/ the combobox (cannot make a new selection)
         currentstate = str(self.fingercombo['state'])
 
-        # Finger combobox should be active if the gripper status is None, Idle, Holding or Error
-        deactivate_menu = gripper_status in ('Opening', 'Closing', 'Holding')
+        # Finger combobox should be deactivated if the status is Opening, Closing or Holding
+        deactivate_menu = gripper_status in (self.kukaGripper1.status_types.Opening,
+                                        self.kukaGripper1.status_types.Closing, self.kukaGripper1.status_types.Holding)
 
         # Change the current state
         if currentstate == 'readonly' and deactivate_menu:
