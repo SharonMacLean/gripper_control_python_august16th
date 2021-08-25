@@ -1,6 +1,7 @@
 import serial  # Check that this runs properly
 import time
 import struct
+from enum import Enum
 import json
 
 class Gripper:
@@ -13,6 +14,9 @@ class Gripper:
         self.serial_communication = None
         self.gripperGui = None
         self.motorError = None
+
+        self.status_types = Enum('status_types', 'Idle Holding Opening Closing Error')
+        self.status = self.status_types.Idle
 
         self.positionsetpoint = None
         self.forcesetpoint = None
@@ -34,7 +38,6 @@ class Gripper:
         self.finger_deflection = 0
         self.finger_deflection_uncertainty = 0
         self.force_uncertainty = 1.135                 # N
-        self.status = 'Idle'
         self.control_input = None
         # The distance in mm that one lead screw has made it's QCTP travel (mm). Equivalent to x1 in the diagram
         self.lead_screw_position = 0
@@ -93,9 +96,6 @@ class Gripper:
                                           ('Position', b'\x0B'), ('Deflection', b'\x0C'),
                                           ('FlexSensor', b'\x0D')])
 
-        # Below do some type of enum or dictionary situation to restrict what the statuses can be set to.
-        #self.parameter_dictionary = ['Idle','Error','Opening','Closing','Holding']
-
         # From the A1-16 smart servo datasheet
         # These are the definitions of the motor error codes (status_error)
         self.motor_error_dictionary = dict([(b'\x00', 'No Error (White LED on)'),
@@ -139,7 +139,7 @@ class Gripper:
     def zero_gripper(self):
         func = self.functions_dictionary['FullyOpen']
         self.send_teensy_serial(func)
-        self.update_status('Opening')
+        self.update_status(self.status_types.Opening)
         self.positionsetpoint = 0
 
 
@@ -276,11 +276,11 @@ class Gripper:
 
     def stop_gripper_loose(self):
         self.send_teensy_serial(self.functions_dictionary['Loose'])
-        self.update_status('Idle')
+        self.update_status(self.status_types.Idle)
 
     def stop_gripper_hold(self):
         self.send_teensy_serial(self.functions_dictionary['Hold'])
-        self.update_status('Holding')
+        self.update_status(self.status_types.Holding)
         func = self.parameter_dictionary['Hold']
         self.send_teensy_serial(func)
 
@@ -296,7 +296,7 @@ class Gripper:
             position_bytes = struct.pack('f', position)
 
             # Update status and prompt Teensy to open
-            self.update_status('Opening')
+            self.update_status(self.status_types.Opening)
             self.send_teensy_serial(self.functions_dictionary['Open'], position_bytes)
             self.positionsetpoint = position
 
@@ -318,11 +318,11 @@ class Gripper:
 
         # Pass parameters and prompt Teensy to start gripping
         self.send_teensy_serial(self.functions_dictionary['Close'])
-        self.update_status("Closing")
+        self.update_status(self.status_types.Closing)
 
         # Update gui status
         if gui is not None:
-            gui.curstatevar.set(self.status)
+            gui.curstatevar.set(self.status.name)
 
         # Set flags prior to loop
         self.first_loop = True
@@ -339,7 +339,7 @@ class Gripper:
         tempPos = self.get_info(["Position"])
         #print("update_pos: after get_info(Position) ")
         self.lead_screw_position = tempPos[0][0]
-        print("Lead screw: " + str(self.lead_screw_position))
+        #print("Lead screw: " + str(self.lead_screw_position))
 
         # Get parameters for finger deflections depending on which finger set is being used
         # Estimate finger deflection from quadratic finger stiffness curve-fitting
@@ -353,12 +353,10 @@ class Gripper:
             self.finger_stiffness_values[self.fingertype][2] * self.force_uncertainty + \
             self.finger_stiffness_values[self.fingertype][3]
 
-        print(self.fingertype)
-        print(self.finger_position_offsets[self.fingertype])
+        #print(self.fingertype)
+        #print(self.finger_position_offsets[self.fingertype])
 
         # Update the current position of the QCTP, and the gripping fingers
-        # TODO: this would allow the convex gripper fingers to run into each other (since they extend 9 mm past the metal
-        # TODO: surface of the flexible finger base. This should be added to the calculation to prevent collision.
         self.currentpositiontrue = self.maximumsize - 2 * self.lead_screw_position
         self.currentpositionfinger = self.currentpositiontrue - 2*self.finger_position_offsets[self.fingertype]
         self.currentpositionfinger_w_deflection = self.currentpositionfinger + 2 * self.finger_deflection
@@ -401,24 +399,28 @@ class Gripper:
         self.gripperGui.change_finger_combobox_state(gripper_status=new_status)
 
     def gripper_loop(self):
-        if self.status == 'Opening':
-            #print("Gripper loop: Opening")
+        if self.status == self.status_types.Opening:
             # Update current position
             self.update_pos()
-            #print("Gripper loop: Past update_pos()")
 
             # If the current position of the gripper is within the position tolerance, loosen the gripper.
             if abs(self.lead_screw_position-self.positionsetpoint) < self.positionthreshold:
-                self.update_status('Idle')
+                self.update_status(self.status_types.Idle)
                 func = self.functions_dictionary['Loose']
                 self.send_teensy_serial(func)
 
-        if self.status == 'Holding':
+        if self.status == self.status_types.Holding:
             func = ['Force']
             force = self.get_info(func)
-            self.gripperGui.curforcevar.set(str(force)+' N')
 
-        if self.status == 'Closing':
+            # TODO: Remove this and just let it update normally in the main loop of Main.py?
+            # TODO: Why isn't this value multiplied by the constants the other one later in the loop is?
+            # TODO: This doesn't update the self.current_force variable
+            # self.gripperGui.curforcevar.set(str(force)+' N')
+            # formatted the print better for now
+            self.gripperGui.curforcevar.set(("{:." + str(3) + "f}").format(force) + " N")
+
+        if self.status == self.status_types.Closing:
             # Wait until gripper has contacted object to begin supplying control inputs
             if not self.contact_made:
                 teensy_update = self.get_teensy_serial()
@@ -464,11 +466,11 @@ class Gripper:
 
                         # Update teensy to keep current position setpoint
                         self.send_teensy_serial(self.functions_dictionary['Hold'])
-                        self.update_status('Holding')
+                        self.update_status(self.status_types.Holding)
 
             else:
                 self.counter = 0
-        if self.status == 'Idle':
+        if self.status == self.status_types.Idle:
             pass
 
         # Update the force and motor error variables
@@ -479,4 +481,4 @@ class Gripper:
 
         # If a motor error is reported, change the gripper status to 'Error'
         if self.motorError is not 0:
-            self.update_status('Error')
+            self.update_status(self.status_types.Error)

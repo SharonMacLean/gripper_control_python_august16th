@@ -75,7 +75,7 @@ def mainloop():
                                              + " mm")
 
     # Update the gripper status displayed by the GUI
-    kukaGripperGUI.curstatevar.set(kukaGripper1.status)
+    kukaGripperGUI.curstatevar.set(kukaGripper1.status.name)
 
     # Update the motor error code displayed by the GUI
     kukaGripperGUI.servomotor_error_var.set(kukaGripper1.motorError)
