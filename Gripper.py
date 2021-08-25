@@ -285,14 +285,6 @@ class Gripper:
         self.send_teensy_serial(func)
 
     def open_gripper(self, position):
-        # Check if given size is below maximum size, if not fully open gripper
-        #print("Finger type when opening: " + self.fingertype)
-        if position*2 >= self.maximumsize:
-            print("Lead Screw position must be less than " + str(self.maximumsize/2) + " mm.")
-            exit()
-        elif position < 0:
-            self.zero_gripper()
-        else:
             position_bytes = struct.pack('f', position)
 
             # Update status and prompt Teensy to open
