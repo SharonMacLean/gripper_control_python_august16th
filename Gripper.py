@@ -92,7 +92,7 @@ class Gripper:
                                           ('DutyCycle', b'\x03'), ('ThetaTarget', b'\x04'),
                                           ('ThetaActual', b'\x05'), ('OmegaTarget', b'\x06'),
                                           ('OmegaActual', b'\x07'), ('MotorError', b'\x08'),
-                                          ('OmAmpOutput', b'\x09'), ('Force', b'\x0A'),
+                                          ('LoadCellOpAmpOutVoltage', b'\x09'), ('Force', b'\x0A'),
                                           ('Position', b'\x0B'), ('Deflection', b'\x0C'),
                                           ('FlexSensor', b'\x0D')])
 
@@ -468,6 +468,7 @@ class Gripper:
         # Update the force and motor error variables
         self.current_state_data = self.get_info(['Force', 'MotorError'])
         self.current_sensor_force = self.current_state_data[0][0]
+        print("Raw force read in: " + str(self.current_sensor_force))
         self.currentforce = self.current_sensor_force * self.sensor_to_gripping_force - self.force_sensor_preload
         self.motorError = self.current_state_data[1]
 
