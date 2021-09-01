@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="829e82ea-4234-44c7-a9ba-3d2f37798127" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Gripper.py" afterPath="$PROJECT_DIR$/Gripper.py" />
       <change beforePath="$PROJECT_DIR$/GripperGUI.py" afterPath="$PROJECT_DIR$/GripperGUI.py" />
-      <change beforePath="$PROJECT_DIR$/Main.py" afterPath="$PROJECT_DIR$/Main.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -41,8 +38,8 @@
       <file leaf-file-name="GripperGUI.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GripperGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="449" column="31" lean-forward="false" selection-start-line="449" selection-start-column="31" selection-end-line="449" selection-end-column="31" />
+            <state relative-caret-position="139">
+              <caret line="502" column="29" lean-forward="false" selection-start-line="502" selection-start-column="29" selection-end-line="502" selection-end-column="29" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -53,8 +50,8 @@
       <file leaf-file-name="Gripper.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gripper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="398" column="13" lean-forward="false" selection-start-line="398" selection-start-column="13" selection-end-line="398" selection-end-column="13" />
+            <state relative-caret-position="56">
+              <caret line="296" column="17" lean-forward="true" selection-start-line="296" selection-start-column="17" selection-end-line="296" selection-end-column="17" />
               <folding>
                 <element signature="e#0#46#0" expanded="true" />
               </folding>
@@ -66,9 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>finger_off</find>
-      <find>finger_gains</find>
-      <find>ope</find>
       <find>update_pos</find>
       <find>objectdistance</find>
       <find>self.object</find>
@@ -93,9 +87,12 @@
       <find>stopbutton</find>
       <find>self.get_info</find>
       <find>update_finger_gains</find>
-      <find>close</find>
       <find>set_finger_type</find>
+      <find>holding</find>
+      <find>positionsetpoint</find>
+      <find>close</find>
       <find>close_</find>
+      <find>validate_user_input</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -716,8 +713,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gripper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="398" column="13" lean-forward="false" selection-start-line="398" selection-start-column="13" selection-end-line="398" selection-end-column="13" />
+        <state relative-caret-position="56">
+          <caret line="296" column="17" lean-forward="true" selection-start-line="296" selection-start-column="17" selection-end-line="296" selection-end-column="17" />
           <folding>
             <element signature="e#0#46#0" expanded="true" />
           </folding>
@@ -726,8 +723,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GripperGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="449" column="31" lean-forward="false" selection-start-line="449" selection-start-column="31" selection-end-line="449" selection-end-column="31" />
+        <state relative-caret-position="139">
+          <caret line="502" column="29" lean-forward="false" selection-start-line="502" selection-start-column="29" selection-end-line="502" selection-end-column="29" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>

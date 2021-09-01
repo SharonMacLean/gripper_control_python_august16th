@@ -506,7 +506,7 @@ class GripperGUI:
             # If the value was successfully cast to a float
             else:
                 # If the value is in the valid range, close the gripper
-                if minvalue < inputfloat <= maxvalue:
+                if minvalue <= inputfloat <= maxvalue:
                     return inputfloat
                 else:  # If the value is invalid show an error
                     messagebox.showerror("Invalid Range", ("Please enter a " + valuetype + " between " +
