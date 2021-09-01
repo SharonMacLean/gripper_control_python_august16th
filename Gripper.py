@@ -27,13 +27,15 @@ class Gripper:
 
         # Current distance between the gripper fingers (accounting for finger offset and
         # finger deflection
-        self.currentpositionfinger = None # mm
-        self.currentpositionfinger_w_deflection = None              # mm
-        self.currentpositionuncertainty = None            # mm
-        self.current_sensor_force = None
+        self.currentpositionfinger = None              # mm
+        self.currentpositionfinger_w_deflection = None # mm
+        self.currentpositionuncertainty = None         # mm
+        self.current_sensor_force = None               # N, current force measured by the load cell
         self.current_state_data = None
-        self.currentforce = None                       # N
-        self.objectdistance = None                     # TODO: How is this defined?
+        self.currentforce = None                       # N, currently applied gripping force (calculated from the load
+                                                       # cell measurement)
+        self.objectdistance = None                     # Object position is measured from base of Kuka wrist (this was
+                                                       # stated in the close_button_clicked() method)
         self.currentservoangle = None
         self.finger_deflection = 0
         self.finger_deflection_uncertainty = 0
@@ -50,7 +52,7 @@ class Gripper:
         self.start_time = 0
 
         # mm. Distance between the closest surfaces of the flexible finger bases when fully opened (maximum distance).
-        self.maximumsize = 150
+        self.maximumsize = 150        # mm
         self.maximumforce = 73.125    # N
         self.minimumforce = 5  # N - Due to Op-Amp issues outputting near rail voltage (0V - 12V)
         self.maximummass = 3  # kg
@@ -70,13 +72,13 @@ class Gripper:
                                              ('Thick Concave', (23640.7, -0.0001, 0.0486, 0.1)),
                                              ('Festo Flexible', (0, 0, 0, 0))])
 
-        # Finger offset distance from the inner surface of the flexible finger base (dwg. # ENGG4000-GR13015)
+        # Finger offset distance (mm) from the inner surface of the flexible finger base (dwg. # ENGG4000-GR13015)
         # Positive if offset towards the center of the gripper, negative if offset in the opposite direction.
         # Verified all of the values (except for the Festo Flexible) on August 2021
         # TODO: replace the 'Festo Flexible' offset with the real value once it is successfully installed on the adapter
         # TODO: add the finger offset value for the 'Thick Concave' finger type (if it is still a valid type).
         self.finger_position_offsets = dict([('Rigid', 0), ('Thin Convex', 9), ('Thin Concave', -9),
-                                             ('Festo Flexible', 0)])
+                                             ('Festo Flexible', 4)])
 
         # Any functions which Teensy should respond to must be added here, and to Teensy code
         # Bytes must line up exactly as listed here, and in the Teensy code
@@ -417,6 +419,8 @@ class Gripper:
 
             # TODO: Remove this and just let it update normally in the main loop of Main.py?
             # TODO: Why isn't this value multiplied by the constants the other one later in the loop is?
+            # TODO: Since it is not multiplied, it is equal to just the force measured at the load cell, not the actual
+            # gripper finger.
             # TODO: This doesn't update the self.current_force variable
             # self.gripperGui.curforcevar.set(str(force)+' N')
             # formatted the print better for now
@@ -484,7 +488,14 @@ class Gripper:
 
         #Temp output the measured op amp voltage:
         #print("Measured op amp voltage: " + str(temp_data))
+        print("Lead screw pos: " + str(self.lead_screw_position))
 
         # If a motor error is reported, change the gripper status to 'Error'
         if self.motorError is not 0:
             self.update_status(self.status_types.Error)
+        # If no motor error is reported but the gripper status is Error, change it back to Idle
+        # TODO: This could be problematic if an error was reported for a quick sec while closing or holding
+        # TODO: This might need to be changed
+        #else:
+         #   if self.status == self.status_types.Error:
+         #       self.update_status("Idle")
