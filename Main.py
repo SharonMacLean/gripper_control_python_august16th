@@ -10,7 +10,7 @@ kukaGripperController = PythonController()
 kukaGripper1 = Gripper(controller=kukaGripperController)
 
 root = Tk()
-kukaGripperGUI = GripperGUI(root, kukaGripper1)
+kukaGripperGUI = GripperGUI(master=root,gripper=kukaGripper1)
 numDecimals = 3  # Number of decimals to show when displaying the gripper measurements
 kukaGripper1.initialize_gripper(serial_port='/dev/ttyACM0', baud=115200, serial_timeout=0.01, gui=kukaGripperGUI)
 

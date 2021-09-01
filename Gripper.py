@@ -265,12 +265,17 @@ class Gripper:
             #    temp = input("Microcontroller not responding, Exit(Y/N)")
             #    if temp == "y":
             #        exit()
-
+        #print("after while")
         # Get values from list, values are hex
         returned_values_bytes = message_recieved[1]
-
+        #print(returned_values_bytes)
+        #print("Before unpack in get_info")
         # Use method to convert bytes to floats and integers
         returned_values = self.unpack_serial_data(returned_values_bytes, parameters)
+        #print("After unpack")
+        #print("Returned values: " + str(returned_values))
+        #if parameters == 'LoadCellOpAmpOutVoltage':
+           #print("Returned values: " + str(returned_values))
 
         return returned_values
 
@@ -302,9 +307,6 @@ class Gripper:
         # Update Current sensor preload value
         self.force_sensor_preload = self.current_sensor_force * self.sensor_to_gripping_force
 
-        # Update controller with current gripping fingers to get new gains
-        self.controller.update_finger_gains(fingertype=self.fingertype)
-
         # Update setpoint for controller
         self.controller.setpoint = self.forcesetpoint
 
@@ -327,11 +329,8 @@ class Gripper:
 
     # This method updates the position variables and calculates their corresponding uncertainty values.
     def update_pos(self):
-        #print("update_pos: before get_info(Position) ")
         tempPos = self.get_info(["Position"])
-        #print("update_pos: after get_info(Position) ")
         self.lead_screw_position = tempPos[0][0]
-        #print("Lead screw: " + str(self.lead_screw_position))
 
         # Get parameters for finger deflections depending on which finger set is being used
         # Estimate finger deflection from quadratic finger stiffness curve-fitting
@@ -372,9 +371,14 @@ class Gripper:
             else:
                 # Splice off data, 4 bytes at a time
                 value_bytes = data_received[char_pos:(char_pos + num_bytes)]
+                #print("Value_bytes: ")
+                #print(value_bytes)
+                #print("Before unpack")
+                value = None
+
                 # Convert back to a float
                 value = struct.unpack('f', value_bytes)
-
+                #print("After unpack")
                 # Add converted value to list of values to return
                 unpacked_data.append(value)
 
@@ -389,6 +393,12 @@ class Gripper:
     def update_status(self, new_status):
         self.status = new_status
         self.gripperGui.change_finger_combobox_state(gripper_status=new_status)
+
+    def set_finger_type(self, fingertype_new):
+        # Update the finger type variable
+        self.fingertype = fingertype_new
+        # Update controller with current gripping fingers to get new gains
+        self.controller.update_finger_gains(fingertype=self.fingertype)
 
     def gripper_loop(self):
         if self.status == self.status_types.Opening:
@@ -468,9 +478,12 @@ class Gripper:
         # Update the force and motor error variables
         self.current_state_data = self.get_info(['Force', 'MotorError'])
         self.current_sensor_force = self.current_state_data[0][0]
-        print("Raw force read in: " + str(self.current_sensor_force))
+        #print("Raw force read in: " + str(self.current_sensor_force))
         self.currentforce = self.current_sensor_force * self.sensor_to_gripping_force - self.force_sensor_preload
         self.motorError = self.current_state_data[1]
+
+        #Temp output the measured op amp voltage:
+        #print("Measured op amp voltage: " + str(temp_data))
 
         # If a motor error is reported, change the gripper status to 'Error'
         if self.motorError is not 0:
