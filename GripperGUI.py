@@ -246,7 +246,7 @@ class GripperGUI:
         self.curstate.grid(column=3, row=2)
 
         # Display current percent of deflection (for the Festo adaptive gripper) - Allows updating
-        self.curflexpercentlabel = Label(frame_measurements, text="Flex %:", font=("Times New Roman", 10),
+        self.curflexpercentlabel = Label(frame_measurements, text="Average Flex %:", font=("Times New Roman", 10),
                                    background=background_colour)
         self.curflexpercentlabel.grid(column=2, row=3)
 
@@ -291,19 +291,26 @@ class GripperGUI:
         # Sensor not connected labels
         self.servomotor_error_var = StringVar()
         self.servomotor_error_var.set("")
+        self.loadcell_left_var = StringVar()
+        self.loadcell_left_var.set("Connected")
+        self.loadcell_right_var = StringVar()
+        self.loadcell_right_var.set("Connected")
+        self.flexsensor_left_var = StringVar()
+        self.flexsensor_right_var = StringVar()
+
         self.label_servomotor = Label(frame_sensorstatus, textvariable=self.servomotor_error_var,
                                      font=("Times New Roman", 10),
                                      background=background_colour)
-        self.label_loadcell_left_value = Label(frame_sensorstatus, text="Connected",
+        self.label_loadcell_left_value = Label(frame_sensorstatus, textvariable=self.loadcell_left_var,
                                      font=("Times New Roman", 10),
                                      background=background_colour)
-        self.label_loadcell_right_value = Label(frame_sensorstatus, text="Connected",
+        self.label_loadcell_right_value = Label(frame_sensorstatus, textvariable=self.loadcell_right_var,
                                      font=("Times New Roman", 10),
                                      background=background_colour)
-        self.label_flexsensor_left_value = Label(frame_sensorstatus, text="Connected",
+        self.label_flexsensor_left_value = Label(frame_sensorstatus, textvariable=self.flexsensor_left_var,
                                      font=("Times New Roman", 10),
                                      background=background_colour)
-        self.label_flexsensor_right_value = Label(frame_sensorstatus, text="Connected",
+        self.label_flexsensor_right_value = Label(frame_sensorstatus, textvariable=self.flexsensor_right_var,
                                      font=("Times New Roman", 10),
                                      background=background_colour)
 

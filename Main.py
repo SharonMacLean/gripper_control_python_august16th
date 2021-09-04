@@ -78,8 +78,31 @@ def mainloop():
     kukaGripperGUI.curstatevar.set(kukaGripper1.status.name)
 
     # Update the current flex percentage displayed by the GUI
-    currentflexpercent = kukaGripper1.current_flex_percent
-    kukaGripperGUI.curflexpercentvar.set(("{:." + str(numDecimals) + "f}").format(currentflexpercent))
+    currentflexpercentleft = kukaGripper1.current_flex_percent_left
+    currentflexpercentright = kukaGripper1.current_flex_percent_right
+    doAverage = True
+
+    print(currentflexpercentleft)
+
+    # disconnected sensor
+    if currentflexpercentleft == 110.0:
+        kukaGripperGUI.flexsensor_left_var.set("Not Connected")
+        doAverage = False
+    else:
+        kukaGripperGUI.flexsensor_left_var.set("Connected")
+
+    # disconnected sensor
+    if currentflexpercentright == 110:
+        kukaGripperGUI.flexsensor_right_var.set("Not Connected")
+        doAverage = False
+    else:
+        kukaGripperGUI.flexsensor_right_var.set("Connected")
+
+    if doAverage:
+        averageFlexPercent = (currentflexpercentleft+currentflexpercentright)/2
+        kukaGripperGUI.curflexpercentvar.set(("{:." + str(numDecimals) + "f}").format(averageFlexPercent))
+    else:
+        kukaGripperGUI.curflexpercentvar.set("Disconnected Sensor")
 
     # Update the motor error code displayed by the GUI
     kukaGripperGUI.servomotor_error_var.set(kukaGripper1.motorError)

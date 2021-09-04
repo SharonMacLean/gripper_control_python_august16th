@@ -32,7 +32,8 @@ class Gripper:
         self.currentpositionuncertainty = None         # mm
         self.current_sensor_force = None               # N, current force measured by the load cell
         self.current_state_data = None
-        self.current_flex_percent = None
+        self.current_flex_percent_left = None
+        self.current_flex_percent_right = None
         self.currentforce = None                       # N, currently applied gripping force (calculated from the load
                                                        # cell measurement)
         self.objectdistance = None                     # Object position is measured from base of Kuka wrist (this was
@@ -60,7 +61,7 @@ class Gripper:
         self.maximumobjectdist = 20  # cm TODO: update this value
         self.minimumobjectdist = 11.5  # cm TODO: update this value
         self.minimum_stable_time = 0.1  # TODO: update this value (in seconds)
-        self.positionthreshold = 0.5  # mm TODO: this value needs to be decreased. The current position tolerance is only 2 mm (cause 1 mm per lead screw)
+        self.positionthreshold = 0.5  # mm
         self.hinge_distance = 11.5  # Distance from KUKA wrist to QCTP hinge (cm)
         self.hinge_to_FS = 4  # Distance from Hinge to Force Sensor (cm)
 
@@ -96,8 +97,8 @@ class Gripper:
                                           ('ThetaActual', b'\x05'), ('OmegaTarget', b'\x06'),
                                           ('OmegaActual', b'\x07'), ('MotorError', b'\x08'),
                                           ('LoadCellOpAmpOutVoltage', b'\x09'), ('Force', b'\x0A'),
-                                          ('Position', b'\x0B'), ('Deflection', b'\x0C'),
-                                          ('FlexSensorOutVoltage', b'\x0D')])
+                                          ('Position', b'\x0B'), ('FlexPercentLeft', b'\x0C'),
+                                          ('FlexPercentRight', b'\x0D'), ('FlexSensorOutVoltage', b'\x0E')])
 
         # From the A1-16 smart servo datasheet
         # These are the definitions of the motor error codes (status_error)
@@ -487,8 +488,11 @@ class Gripper:
         self.currentforce = self.current_sensor_force * self.sensor_to_gripping_force - self.force_sensor_preload
         self.motorError = self.current_state_data[1]
 
-        self.current_flex_percent = self.get_info(['Deflection'])[0][0]
-        print("Flex amount: " + str(self.current_flex_percent))
+        self.current_flex_percent_left = self.get_info(['FlexPercentLeft'])[0][0]
+        print("Flex amount: " + str(self.current_flex_percent_left))
+
+        self.current_flex_percent_right = self.get_info(['FlexPercentRight'])[0][0]
+        print("Flex amount: " + str(self.current_flex_percent_right))
 
         current_flex_voltage = self.get_info(['FlexSensorOutVoltage'])
         print("Flex sensor voltage: " + str(current_flex_voltage[0][0]))
