@@ -20,7 +20,7 @@ class PythonController:
         # Add any other required gain values/required variables to this list of attributes
 
     # Update control gains for "Senior Design" setup for a given control type (P or PI)
-    # TODO: add the appropiate gains for the 'Festo Flexible' gripper finger type here
+    # TODO: add the appropiate gains for the 'Festo Adaptive' gripper finger type here
     def update_finger_gains(self, fingertype):
         if fingertype == "Rigid":
             self.proportional_gain = 0.000869

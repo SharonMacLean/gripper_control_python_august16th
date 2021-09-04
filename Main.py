@@ -11,7 +11,7 @@ kukaGripper1 = Gripper(controller=kukaGripperController)
 
 root = Tk()
 kukaGripperGUI = GripperGUI(master=root,gripper=kukaGripper1)
-numDecimals = 3  # Number of decimals to show when displaying the gripper measurements
+numDecimals = 2  # Number of decimals to show when displaying the gripper measurements
 kukaGripper1.initialize_gripper(serial_port='/dev/ttyACM0', baud=115200, serial_timeout=0.01, gui=kukaGripperGUI)
 
 def main():
@@ -33,13 +33,6 @@ def main():
 # Main loop of the program. The measurement values shown in the Gripper GUI window are updated here.
 def mainloop():
     kukaGripper1.gripper_loop()
-    # Update the current gripper force displayed by the GUI
-    currentforce = kukaGripper1.currentforce
-    if currentforce is None:
-        kukaGripperGUI.curforcevar.set("X N")
-    # If the current position is a number
-    else:
-        kukaGripperGUI.curforcevar.set(("{:." + str(numDecimals) + "f}").format(currentforce) + " N")
 
     # Update the current position of the gripper displayed by the GUI
     currentpositiontrue = kukaGripper1.currentpositiontrue
@@ -73,9 +66,20 @@ def mainloop():
     else:
         kukaGripperGUI.posuncertaintyvar.set(("{:." + str(numDecimals) + "f}").format(currentpositionuncertainty)
                                              + " mm")
+    # Update the current gripper force displayed by the GUI
+    currentforce = kukaGripper1.currentforce
+    if currentforce is None:
+        kukaGripperGUI.curforcevar.set("X N")
+    # If the current position is a number
+    else:
+        kukaGripperGUI.curforcevar.set(("{:." + str(numDecimals) + "f}").format(currentforce) + " N")
 
     # Update the gripper status displayed by the GUI
     kukaGripperGUI.curstatevar.set(kukaGripper1.status.name)
+
+    # Update the current flex percentage displayed by the GUI
+    currentflexpercent = kukaGripper1.current_flex_percent
+    kukaGripperGUI.curflexpercentvar.set(("{:." + str(numDecimals) + "f}").format(currentflexpercent))
 
     # Update the motor error code displayed by the GUI
     kukaGripperGUI.servomotor_error_var.set(kukaGripper1.motorError)

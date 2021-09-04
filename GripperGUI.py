@@ -43,13 +43,19 @@ class GripperGUI:
                                         ('Thin Convex', "GripperBase_w_convexfingers.PNG"),
                                         ('Thin Concave', "GripperBase_w_concavefingers.PNG"),
                                         ('Thick Concave', "GripperBase_w_concavefingers.PNG"),
-                                        ('Festo Flexible', "GripperBase_w_festofingers.PNG")])
+                                        ('Festo Adaptive', "GripperBase_w_festofingers.PNG")])
         self.gripper_image = None  # Variable for storing the currently displayed image
         # Label to display the gripper image upon
         self.label_image = Label(frame_gripperfingers1, background=background_colour)
-        self.label_image.grid(column=1, row=0)
+        self.label_image.grid(column=2, row=0)
         self.update_gripper_finger_image()  # Display the image
 
+        self.label_left = Label(frame_gripperfingers1, text="Left", font=("Times New Roman", 9),
+                                foreground="Navy", background=background_colour)
+        self.label_left.grid(column=1, row=0)
+        self.label_left = Label(frame_gripperfingers1, text="Right", font=("Times New Roman", 9),
+                                foreground="Navy", background=background_colour)
+        self.label_left.grid(column=3, row=0)
 
         # Frame to hold gripper image
         frame_gripperfingers2 = tk.Frame(frame_gripperfingers1, background=background_colour)
@@ -61,7 +67,7 @@ class GripperGUI:
         self.fingerlabel.grid(column=0, row=0, padx=(0, 70), pady=(0, 10))
 
         self.fingercombo = Combobox(frame_gripperfingers2, state="readonly")  # Readonly so the user cannot type into the combobox
-        self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave", "Festo Flexible")
+        self.fingercombo['values'] = ("Rigid", "Thin Convex", "Thin Concave", "Thick Concave", "Festo Adaptive")
         self.fingercombo.set("")
         self.fingercombo.grid(column=0, row=1)
         self.fingercombo.bind("<<ComboboxSelected>>", self.update_finger_type)
@@ -202,28 +208,6 @@ class GripperGUI:
                                                             ("Times New Roman", 10), background=background_colour)
         self.curfingersize_deflect.grid(column=1, row=3)
 
-        # Display current gripping force - Allows updating
-        self.curforcelabel = Label(frame_measurements, text="Current gripping force:", font=("Times New Roman", 10), background=
-                                   background_colour)
-        self.curforcelabel.grid(column=2, row=1)
-
-        self.curforcevar = StringVar()
-        self.curforcevar.set("X N")
-        self.curforce = Label(frame_measurements, textvariable=self.curforcevar, font=("Times New Roman", 10), background=
-                              background_colour)
-        self.curforce.grid(column=3, row=1)
-
-        # Display current gripper state - Allows updating
-        self.curstatelabel = Label(frame_measurements, text="Current Gripper State:", font=("Times New Roman", 10), background=
-                                   background_colour)
-        self.curstatelabel.grid(column=2, row=2)
-
-        self.curstatevar = StringVar()
-        self.curstatevar.set("Unknown")
-        self.curstate = Label(frame_measurements, textvariable=self.curstatevar, font=("Times New Roman", 10), background=
-                              background_colour)
-        self.curstate.grid(column=3, row=2)
-
         # Display current position uncertainty - Allows updating
         self.posuncertaintylabel = Label(frame_measurements, text="Current position uncertainty:", font=("Times New Roman", 10),
                                          background=background_colour)
@@ -234,6 +218,43 @@ class GripperGUI:
         self.posuncertainty = Label(frame_measurements, textvariable=self.posuncertaintyvar, font=("Times New Roman", 10),
                                     background=background_colour)
         self.posuncertainty.grid(column=1, row=4)
+
+        # Display current gripping force - Allows updating
+        self.curforcelabel = Label(frame_measurements, text="Current gripping force:", font=("Times New Roman", 10),
+                                   background=
+                                   background_colour)
+        self.curforcelabel.grid(column=2, row=1)
+
+        self.curforcevar = StringVar()
+        self.curforcevar.set("X N")
+        self.curforce = Label(frame_measurements, textvariable=self.curforcevar, font=("Times New Roman", 10),
+                              background=
+                              background_colour)
+        self.curforce.grid(column=3, row=1)
+
+        # Display current gripper state - Allows updating
+        self.curstatelabel = Label(frame_measurements, text="Current Gripper State:", font=("Times New Roman", 10),
+                                   background=
+                                   background_colour)
+        self.curstatelabel.grid(column=2, row=2)
+
+        self.curstatevar = StringVar()
+        self.curstatevar.set("Unknown")
+        self.curstate = Label(frame_measurements, textvariable=self.curstatevar, font=("Times New Roman", 10),
+                              background=
+                              background_colour)
+        self.curstate.grid(column=3, row=2)
+
+        # Display current percent of deflection (for the Festo adaptive gripper) - Allows updating
+        self.curflexpercentlabel = Label(frame_measurements, text="Flex %:", font=("Times New Roman", 10),
+                                   background=background_colour)
+        self.curflexpercentlabel.grid(column=2, row=3)
+
+        self.curflexpercentvar = StringVar()
+        self.curflexpercentvar.set("N/A")
+        self.curflexpercent = Label(frame_measurements, textvariable=self.curflexpercentvar,
+                                    font=("Times New Roman", 10), background=background_colour)
+        self.curflexpercent.grid(column=3, row=3)
 
         # Frame to hold the sensor status
         frame_sensorstatus = tk.Frame(master, background=background_colour)

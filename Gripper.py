@@ -32,6 +32,7 @@ class Gripper:
         self.currentpositionuncertainty = None         # mm
         self.current_sensor_force = None               # N, current force measured by the load cell
         self.current_state_data = None
+        self.current_flex_percent = None
         self.currentforce = None                       # N, currently applied gripping force (calculated from the load
                                                        # cell measurement)
         self.objectdistance = None                     # Object position is measured from base of Kuka wrist (this was
@@ -59,7 +60,7 @@ class Gripper:
         self.maximumobjectdist = 20  # cm TODO: update this value
         self.minimumobjectdist = 11.5  # cm TODO: update this value
         self.minimum_stable_time = 0.1  # TODO: update this value (in seconds)
-        self.positionthreshold = 1  # mm TODO: this value needs to be decreased. The current position tolerance is only 2 mm (cause 1 mm per lead screw)
+        self.positionthreshold = 0.5  # mm TODO: this value needs to be decreased. The current position tolerance is only 2 mm (cause 1 mm per lead screw)
         self.hinge_distance = 11.5  # Distance from KUKA wrist to QCTP hinge (cm)
         self.hinge_to_FS = 4  # Distance from Hinge to Force Sensor (cm)
 
@@ -70,7 +71,7 @@ class Gripper:
                                              ('Thin Convex', (11764.71, -0.0013, 0.1205, 0.2)),
                                              ('Thin Concave', (9345.79, -0.002, 0.1671, 0.2)),
                                              ('Thick Concave', (23640.7, -0.0001, 0.0486, 0.1)),
-                                             ('Festo Flexible', (0, 0, 0, 0))])
+                                             ('Festo Adaptive', (0, 0, 0, 0))])
 
         # Finger offset distance (mm) from the inner surface of the flexible finger base (dwg. # ENGG4000-GR13015)
         # Positive if offset towards the center of the gripper, negative if offset in the opposite direction.
@@ -78,7 +79,7 @@ class Gripper:
         # TODO: replace the 'Festo Flexible' offset with the real value once it is successfully installed on the adapter
         # TODO: add the finger offset value for the 'Thick Concave' finger type (if it is still a valid type).
         self.finger_position_offsets = dict([('Rigid', 0), ('Thin Convex', 9), ('Thin Concave', -9),
-                                             ('Festo Flexible', 4)])
+                                             ('Festo Adaptive', 5)])
 
         # Any functions which Teensy should respond to must be added here, and to Teensy code
         # Bytes must line up exactly as listed here, and in the Teensy code
@@ -96,7 +97,7 @@ class Gripper:
                                           ('OmegaActual', b'\x07'), ('MotorError', b'\x08'),
                                           ('LoadCellOpAmpOutVoltage', b'\x09'), ('Force', b'\x0A'),
                                           ('Position', b'\x0B'), ('Deflection', b'\x0C'),
-                                          ('FlexSensor', b'\x0D')])
+                                          ('FlexSensorOutVoltage', b'\x0D')])
 
         # From the A1-16 smart servo datasheet
         # These are the definitions of the motor error codes (status_error)
@@ -486,9 +487,15 @@ class Gripper:
         self.currentforce = self.current_sensor_force * self.sensor_to_gripping_force - self.force_sensor_preload
         self.motorError = self.current_state_data[1]
 
+        self.current_flex_percent = self.get_info(['Deflection'])[0][0]
+        print("Flex amount: " + str(self.current_flex_percent))
+
+        current_flex_voltage = self.get_info(['FlexSensorOutVoltage'])
+        print("Flex sensor voltage: " + str(current_flex_voltage[0][0]))
+
         #Temp output the measured op amp voltage:
         #print("Measured op amp voltage: " + str(temp_data))
-        print("Lead screw pos: " + str(self.lead_screw_position))
+        #print("Lead screw pos: " + str(self.lead_screw_position))
 
         # If a motor error is reported, change the gripper status to 'Error'
         if self.motorError is not 0:
